@@ -1,0 +1,639 @@
+{
+  "dataset": "FlyRank/internship-warehouse",
+  "revision": "50cbf7c3909d07be4d1b5906b4d09e882e5acbf2",
+  "config": {
+    "version": 2,
+    "grain_policy": "exclude any page-month with duplicate daily records before features or labels",
+    "seed": 42,
+    "revision": "50cbf7c3909d07be4d1b5906b4d09e882e5acbf2",
+    "min_feature_impressions": 500,
+    "min_tracking_coverage": 0.9,
+    "min_content_age_days": 90,
+    "decline_ratio": 0.8,
+    "training_pair": [
+      "2026-03",
+      "2026-04"
+    ],
+    "validation_pair": [
+      "2026-04",
+      "2026-05"
+    ],
+    "test_pair": [
+      "2026-05",
+      "2026-06"
+    ],
+    "client_partitions": "60/20/20 from March-eligible clients",
+    "primary_metric": "precision_at_50_expected_ties",
+    "features": [
+      "log_impressions",
+      "log_clicks",
+      "ctr_pct",
+      "weighted_position",
+      "active_day_share",
+      "click_day_share",
+      "daily_impression_cv",
+      "half_month_change",
+      "gsc_coverage",
+      "content_age_days"
+    ],
+    "baseline": "max(0,-half_month_change) * log1p(feature_month_impressions)",
+    "secondary_baseline": "feature_month_impressions",
+    "final_refit": "March-April and April-May from training and validation clients only"
+  },
+  "source_sha256": "d6fe7b0a6b5b86b9d584b587c60192ed43525784e0c9733390cfae2b40c97b47",
+  "run_utc": "2026-09-08T16:47:30.586620+00:00",
+  "inventory": {
+    "revision": "50cbf7c3909d07be4d1b5906b4d09e882e5acbf2",
+    "daily_rows": 78835655,
+    "start": "2025-01-27",
+    "end": "2026-06-30"
+  },
+  "scanned_months": {
+    "2026-03": {
+      "daily_rows": 9841378,
+      "page_months": 331437,
+      "start": "2026-03-01",
+      "end": "2026-03-31",
+      "duplicate_daily_rows": 0,
+      "excluded_duplicate_page_months": 0,
+      "excluded_raw_rows_in_duplicate_groups": 0,
+      "negative_measurement_rows": 0
+    },
+    "2026-04": {
+      "daily_rows": 10424730,
+      "page_months": 362172,
+      "start": "2026-04-01",
+      "end": "2026-04-30",
+      "duplicate_daily_rows": 0,
+      "excluded_duplicate_page_months": 0,
+      "excluded_raw_rows_in_duplicate_groups": 0,
+      "negative_measurement_rows": 0
+    },
+    "2026-05": {
+      "daily_rows": 11687376,
+      "page_months": 389153,
+      "start": "2026-05-01",
+      "end": "2026-05-31",
+      "duplicate_daily_rows": 0,
+      "excluded_duplicate_page_months": 0,
+      "excluded_raw_rows_in_duplicate_groups": 0,
+      "negative_measurement_rows": 0
+    },
+    "2026-06": {
+      "daily_rows": 11694072,
+      "page_months": 409205,
+      "start": "2026-06-01",
+      "end": "2026-06-30",
+      "duplicate_daily_rows": 6390,
+      "excluded_duplicate_page_months": 355,
+      "excluded_raw_rows_in_duplicate_groups": 12780,
+      "negative_measurement_rows": 0
+    }
+  },
+  "feature_filters": {
+    "2026-03": {
+      "page_month_rows": 331437,
+      "history_started": 322135,
+      "feature_tracking_90pct": 83842,
+      "age_90_days": 64624,
+      "impressions_500": 41512
+    },
+    "2026-04": {
+      "page_month_rows": 362172,
+      "history_started": 350708,
+      "feature_tracking_90pct": 93265,
+      "age_90_days": 71454,
+      "impressions_500": 43644
+    },
+    "2026-05": {
+      "page_month_rows": 389153,
+      "history_started": 377273,
+      "feature_tracking_90pct": 97109,
+      "age_90_days": 76161,
+      "impressions_500": 43695
+    }
+  },
+  "cohort_clients": 28,
+  "partition_clients": {
+    "training": 16,
+    "validation": 6,
+    "test": 6
+  },
+  "train_rows": 32771,
+  "validation_rows": 1373,
+  "refit_rows": 69474,
+  "test_rows": 5696,
+  "train_positive_rate": 0.5385554301058864,
+  "validation_positive_rate": 0.5673707210487983,
+  "test_positive_rate": 0.3107443820224719,
+  "observed_train_clients": 16,
+  "observed_validation_clients": 6,
+  "observed_test_clients": 6,
+  "outcome_coverage": {
+    "March_to_April_all_clients": {
+      "eligible_feature_pages": 41512,
+      "evaluable_pages": 40457,
+      "unobserved_outcomes": 1055
+    },
+    "April_to_May_all_clients": {
+      "eligible_feature_pages": 43644,
+      "evaluable_pages": 42346,
+      "unobserved_outcomes": 1298
+    },
+    "May_to_June_test_clients": {
+      "eligible_feature_pages": 5886,
+      "evaluable_pages": 5696,
+      "unobserved_outcomes": 190
+    }
+  },
+  "selected_model": "logistic_regression",
+  "validation_preferred_method": "momentum_rule",
+  "validation_metrics": {
+    "momentum_rule": {
+      "rows": 1373,
+      "positives": 779,
+      "positive_rate": 0.5673707210487983,
+      "roc_auc": 0.7042774773840242,
+      "average_precision": 0.7556393221527709,
+      "precision_at_20": 0.95,
+      "ties_at_20": {
+        "expected": 0.95,
+        "minimum": 0.95,
+        "maximum": 0.95,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.88,
+      "ties_at_50": {
+        "expected": 0.88,
+        "minimum": 0.88,
+        "maximum": 0.88,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.92,
+      "ties_at_100": {
+        "expected": 0.92,
+        "minimum": 0.92,
+        "maximum": 0.92,
+        "boundary_ties": 1
+      }
+    },
+    "volume_rule": {
+      "rows": 1373,
+      "positives": 779,
+      "positive_rate": 0.5673707210487983,
+      "roc_auc": 0.4710066000181533,
+      "average_precision": 0.530239822468521,
+      "precision_at_20": 0.35,
+      "ties_at_20": {
+        "expected": 0.35,
+        "minimum": 0.35,
+        "maximum": 0.35,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.34,
+      "ties_at_50": {
+        "expected": 0.34,
+        "minimum": 0.34,
+        "maximum": 0.34,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.43,
+      "ties_at_100": {
+        "expected": 0.43,
+        "minimum": 0.43,
+        "maximum": 0.43,
+        "boundary_ties": 1
+      }
+    },
+    "logistic_regression": {
+      "rows": 1373,
+      "positives": 779,
+      "positive_rate": 0.5673707210487983,
+      "roc_auc": 0.7692457307348193,
+      "average_precision": 0.7862809009176805,
+      "precision_at_20": 0.85,
+      "ties_at_20": {
+        "expected": 0.85,
+        "minimum": 0.85,
+        "maximum": 0.85,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.84,
+      "ties_at_50": {
+        "expected": 0.84,
+        "minimum": 0.84,
+        "maximum": 0.84,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.85,
+      "ties_at_100": {
+        "expected": 0.85,
+        "minimum": 0.85,
+        "maximum": 0.85,
+        "boundary_ties": 1
+      }
+    },
+    "decision_tree": {
+      "rows": 1373,
+      "positives": 779,
+      "positive_rate": 0.5673707210487983,
+      "roc_auc": 0.6848015888452345,
+      "average_precision": 0.6734041688381437,
+      "precision_at_20": 0.45588235294117646,
+      "ties_at_20": {
+        "expected": 0.45588235294117646,
+        "minimum": 0.0,
+        "maximum": 1.0,
+        "boundary_ties": 68
+      },
+      "precision_at_50": 0.45588235294117646,
+      "ties_at_50": {
+        "expected": 0.45588235294117646,
+        "minimum": 0.26,
+        "maximum": 0.62,
+        "boundary_ties": 68
+      },
+      "precision_at_100": 0.5896202531645569,
+      "ties_at_100": {
+        "expected": 0.5896202531645569,
+        "minimum": 0.52,
+        "maximum": 0.63,
+        "boundary_ties": 79
+      }
+    },
+    "random_forest": {
+      "rows": 1373,
+      "positives": 779,
+      "positive_rate": 0.5673707210487983,
+      "roc_auc": 0.7427678583005926,
+      "average_precision": 0.7683518780079979,
+      "precision_at_20": 0.85,
+      "ties_at_20": {
+        "expected": 0.85,
+        "minimum": 0.85,
+        "maximum": 0.85,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.84,
+      "ties_at_50": {
+        "expected": 0.84,
+        "minimum": 0.84,
+        "maximum": 0.84,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.84,
+      "ties_at_100": {
+        "expected": 0.84,
+        "minimum": 0.84,
+        "maximum": 0.84,
+        "boundary_ties": 1
+      }
+    }
+  },
+  "test_metrics": {
+    "momentum_rule": {
+      "rows": 5696,
+      "positives": 1770,
+      "positive_rate": 0.3107443820224719,
+      "roc_auc": 0.7002526255500777,
+      "average_precision": 0.5556564478891207,
+      "precision_at_20": 1.0,
+      "ties_at_20": {
+        "expected": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.96,
+      "ties_at_50": {
+        "expected": 0.96,
+        "minimum": 0.96,
+        "maximum": 0.96,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.94,
+      "ties_at_100": {
+        "expected": 0.94,
+        "minimum": 0.94,
+        "maximum": 0.94,
+        "boundary_ties": 1
+      }
+    },
+    "volume_rule": {
+      "rows": 5696,
+      "positives": 1770,
+      "positive_rate": 0.3107443820224719,
+      "roc_auc": 0.4616660334838582,
+      "average_precision": 0.2904697435500792,
+      "precision_at_20": 0.25,
+      "ties_at_20": {
+        "expected": 0.25,
+        "minimum": 0.25,
+        "maximum": 0.25,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.26,
+      "ties_at_50": {
+        "expected": 0.26,
+        "minimum": 0.26,
+        "maximum": 0.26,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.28,
+      "ties_at_100": {
+        "expected": 0.28,
+        "minimum": 0.28,
+        "maximum": 0.28,
+        "boundary_ties": 1
+      }
+    },
+    "logistic_regression": {
+      "rows": 5696,
+      "positives": 1770,
+      "positive_rate": 0.3107443820224719,
+      "roc_auc": 0.6796295017139107,
+      "average_precision": 0.5046624801415167,
+      "precision_at_20": 0.85,
+      "ties_at_20": {
+        "expected": 0.85,
+        "minimum": 0.85,
+        "maximum": 0.85,
+        "boundary_ties": 1
+      },
+      "precision_at_50": 0.8,
+      "ties_at_50": {
+        "expected": 0.8,
+        "minimum": 0.8,
+        "maximum": 0.8,
+        "boundary_ties": 1
+      },
+      "precision_at_100": 0.8,
+      "ties_at_100": {
+        "expected": 0.8,
+        "minimum": 0.8,
+        "maximum": 0.8,
+        "boundary_ties": 1
+      }
+    }
+  },
+  "final_model_errors_at_0_5": {
+    "true_negative": 3387,
+    "false_positive": 539,
+    "false_negative": 1155,
+    "true_positive": 615
+  },
+  "client_sensitivity": {
+    "method": "leave one held-out client out, fixed fitted model; descriptive, not a confidence interval",
+    "comparisons": 6,
+    "minimum_p50_difference": -0.15999999999999992,
+    "maximum_p50_difference": 0.0
+  },
+  "importance_kind": "absolute standardized coefficients, not causal effects",
+  "feature_importance": [
+    {
+      "feature": "half_month_change",
+      "importance": 0.7436686219024043
+    },
+    {
+      "feature": "daily_impression_cv",
+      "importance": 0.6617734531314275
+    },
+    {
+      "feature": "log_impressions",
+      "importance": 0.36513582129845057
+    },
+    {
+      "feature": "content_age_days",
+      "importance": 0.3067533665929567
+    },
+    {
+      "feature": "log_clicks",
+      "importance": 0.25413172055048805
+    },
+    {
+      "feature": "click_day_share",
+      "importance": 0.20863089575537064
+    },
+    {
+      "feature": "ctr_pct",
+      "importance": 0.05789587179894369
+    },
+    {
+      "feature": "weighted_position",
+      "importance": 0.03191702183897014
+    }
+  ],
+  "top20_review": [
+    {
+      "rank": 1,
+      "score": 1.0,
+      "volume_band": "10,000+",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 2,
+      "score": 1.0,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 3,
+      "score": 1.0,
+      "volume_band": "500-999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 4,
+      "score": 1.0,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 5,
+      "score": 0.999,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 6,
+      "score": 0.999,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 7,
+      "score": 0.998,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 8,
+      "score": 0.997,
+      "volume_band": "10,000+",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 9,
+      "score": 0.996,
+      "volume_band": "500-999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 10,
+      "score": 0.996,
+      "volume_band": "10,000+",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 11,
+      "score": 0.992,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 12,
+      "score": 0.99,
+      "volume_band": "500-999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 13,
+      "score": 0.99,
+      "volume_band": "10,000+",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 14,
+      "score": 0.989,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 15,
+      "score": 0.989,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 16,
+      "score": 0.988,
+      "volume_band": "1,000-9,999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 17,
+      "score": 0.987,
+      "volume_band": "1,000-9,999",
+      "action": "Inspect recent loss",
+      "reason": "past_momentum_drop",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Seasonality or related pages may explain it"
+    },
+    {
+      "rank": 18,
+      "score": 0.987,
+      "volume_band": "500-999",
+      "action": "Inspect recent loss",
+      "reason": "past_momentum_drop",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Seasonality or related pages may explain it"
+    },
+    {
+      "rank": 19,
+      "score": 0.986,
+      "volume_band": "500-999",
+      "action": "Review snippet and intent",
+      "reason": "visible_low_ctr",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Search layout may explain low CTR"
+    },
+    {
+      "rank": 20,
+      "score": 0.984,
+      "volume_band": "500-999",
+      "action": "Inspect recent loss",
+      "reason": "past_momentum_drop",
+      "evidence": "Limited; uncalibrated score",
+      "what_could_be_wrong": "Seasonality or related pages may explain it"
+    }
+  ],
+  "selection_receipt_file": "work/outputs/warehouse_selection_v2.json",
+  "selection_receipt_sha256": "0171c5c995460e735f2f2b56b3ba4f24a05bdb74ee67fbb9a907f004e01f4fbf",
+  "quality_revision": {
+    "reason": "First June evaluation stopped at duplicate-grain guard before labels or metrics were evaluated. Exclude affected page-months under one policy for all months; no model reselection.",
+    "original_selection_sha256": "596198a3165761b5be6f9dd661454809876aba7883a51765d2429df072b6d2e1",
+    "original_source_sha256": "d92c68a3d512b43055450c48e585f876fec4ff59943cdc3006b06a9e8f7723f2",
+    "original_source_file": "work/scripts/archive/warehouse_capstone_before_grain_fix.py",
+    "model_choice_and_validation_results_unchanged": true
+  },
+  "first_selection_utc": "2026-09-08T14:56:11.750757+00:00",
+  "checks": {
+    "disjoint_clients": true,
+    "features_precede_outcomes": true,
+    "train_only_imputation": true,
+    "daily_grain_unique_after_excluding_invalid_page_months": true,
+    "tracking_gaps_not_filled_as_zero": true,
+    "model_selected_before_june_read": true,
+    "no_label_or_id_features": true,
+    "only_past_outcomes_in_final_fit": true
+  },
+  "limits": [
+    "outcome tracking coverage conditions evaluation",
+    "creation dates are snapshot metadata assumed historically stable",
+    "no historical publication or update-state reconstruction",
+    "only clients eligible in March",
+    "uncalibrated scores",
+    "one final time window; not causal refresh evaluation"
+  ],
+  "versions": {
+    "duckdb": "1.5.5"
+  }
+}

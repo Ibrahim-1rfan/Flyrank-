@@ -1,0 +1,2632 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which pages should I review first for a content refresh? | Ibrahim Irfan Nazar</title>
+<meta name="description" content="A content-review study using the starter CSV and Hugging Face warehouse, with separate baselines, future-window evaluation, and clear limits.">
+<style>
+    :root{--ink:#142438;--blue:#1d4ed8;--line:#d8e0e9;--muted:#526479;--paper:#fff;--soft:#f2f6fc}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:1rem}
+    body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.7 system-ui,-apple-system,'Segoe UI',sans-serif}
+    a{color:var(--blue);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration-thickness:2px}
+    a:focus-visible,.table-wrap:focus-visible{outline:3px solid #087f8c;outline-offset:4px}
+    .skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;background:white;padding:.5rem;z-index:5}
+    header{background:#112b48;color:white;padding:4rem max(5vw,calc((100vw - 1160px)/2)) 3rem;border-bottom:8px solid #087f8c}
+    .eyebrow{font-size:.82rem;letter-spacing:.13em;text-transform:uppercase;color:#afceff;margin:0 0 1rem}
+    h1{font-family:Georgia,serif;font-weight:normal;font-size:clamp(2.2rem,4.4vw,3.9rem);line-height:1.12;max-width:940px;margin:0 0 1.5rem}
+    header p{max-width:760px;color:#d8e9ff;margin:.4rem 0}header .finding{font-size:1.17rem;color:white}
+    .layout{max-width:1230px;margin:auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:3.3rem;padding:2.8rem 2rem 5rem}
+    aside{font-size:.88rem;align-self:start;position:sticky;top:1.5rem}aside strong{display:block;margin-bottom:.8rem}
+    nav{max-height:calc(100vh - 6rem);overflow-y:auto;display:grid;gap:.7rem;border-left:2px solid var(--line);padding-left:1rem}nav a{color:var(--muted);text-decoration:none;line-height:1.45}
+    nav a:hover{color:var(--blue)}article{min-width:0}article>p{max-width:80ch}
+    h2{font:normal 2rem/1.25 Georgia,serif;margin:3.4rem 0 1.1rem;padding-top:1rem;border-top:1px solid var(--line);color:#123a65}
+    h2:first-of-type{margin-top:.5rem;border:0;padding:0}h3{font-size:1.2rem}
+    p{margin:.8rem 0 1rem}strong{font-weight:650}li{margin:.55rem 0}code{font:.83em/1.5 ui-monospace,Consolas,monospace;background:var(--soft);padding:.12em .3em;border-radius:3px;overflow-wrap:anywhere}
+    pre{padding:1.2rem;background:#eff4fa;border-left:3px solid #087f8c;white-space:pre-wrap;overflow-wrap:anywhere}pre code{padding:0;background:none}
+    .table-wrap{overflow-x:auto;margin:1.5rem 0;border:1px solid var(--line);border-radius:4px}
+    table{width:100%;border-collapse:collapse;font-size:.84rem;line-height:1.55}th{background:#eaf1fb;text-align:left;white-space:normal}
+    th,td{padding:.75rem .8rem;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#f7f9fc}
+    figure{margin:2rem 0 .7rem;padding:.5rem;background:white;border:1px solid var(--line)}figure svg{display:block;width:100%;height:auto}
+    figure+p{font-size:.9rem;color:var(--muted)}footer{border-top:1px solid var(--line);padding:2rem;text-align:center;color:var(--muted);font-size:.85rem}
+    @media(max-width:850px){.layout{grid-template-columns:1fr;padding:1.5rem;gap:1.5rem}aside{position:static}nav{max-height:none;grid-template-columns:repeat(2,minmax(0,1fr))}header{padding:2.8rem 1.5rem}h2{font-size:1.7rem;margin-top:2.4rem}}
+    @media(max-width:480px){nav{grid-template-columns:1fr}.layout{padding:1.1rem}header{padding:2rem 1.1rem}body{font-size:16px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+    @media print{aside,.skip{display:none}.layout{display:block;padding:0}header{background:white;color:#142438;padding:1rem 0;border-bottom:2px solid #142438}header p,header .finding,.eyebrow{color:#142438}h1{font-size:28pt}body{font-size:10pt}h2{font-size:18pt}figure,tr{break-inside:avoid}.table-wrap{overflow:visible}a{color:inherit}}
+    </style></head><body><a class="skip" href="#paper">Skip to the paper</a>
+<header><p class="eyebrow">FlyRank ML Internship / Capstone research paper</p><h1>Which pages should I review first for a content refresh?</h1>
+<p class="finding">The model wins the starter comparison (37/50 vs 12/50). The momentum rule wins the warehouse forecast (96.0% vs 80.0% Precision@50).</p><p>Two datasets, separate evaluations, and one goal: useful human review.</p><p>Verified run: 2026-09-08</p></header>
+<div class="layout"><aside><strong>In this paper</strong><nav aria-label="Paper sections"><a href="#title-abstract">Title + Abstract</a><a href="#introduction-problem-statement">Introduction / Problem statement</a><a href="#data">Data</a><a href="#methodology">Methodology</a><a href="#results">Results</a><a href="#limitations-honest-framing">Limitations &amp; honest framing</a><a href="#ranked-recommendations">Ranked recommendations</a><a href="#reproducibility">Reproducibility</a><a href="#acknowledgments-data-credit">Acknowledgments &amp; data credit</a></nav></aside><article id="paper">
+<p><strong>Ibrahim Irfan Nazar | Refresh / Content Opportunity Scoring</strong></p>
+<h2 id="title-abstract">Title + Abstract</h2>
+<p>Which mature pages should a content team review first when it has only 20 to 50 slots? I studied both the 30,000-page starter CSV and a separate monthly forecast built from the Hugging Face warehouse. The CSV comparison uses held-out clients with an overlapping historical label, while the warehouse keeps feature months before outcome months and reserves separate clients for its final May-to-June check. The CSV model reaches 74% Precision@50 versus 24% for its reference rule, and the warehouse model reaches 80.0% versus 96.0% for its momentum rule, with base rates of 39.1% and 31.1%, respectively. The model wins the CSV comparison while the simple momentum rule wins the warehouse forecast, and neither experiment proves that a refresh will recover traffic.</p>
+<h2 id="introduction-problem-statement">Introduction / Problem statement</h2>
+<h3 id="starter-csv-problem-framing">Starter CSV: problem framing</h3>
+<p>I want to help a content team decide which 20 to 50 mature pages to inspect first each month. One row is one page, and the output is a ranked review list. An editor still checks the page, its purpose, and recent changes before deciding what to edit.</p>
+<p>In this starter sample, 16,262 of 30,000 pages (54.2%) have the declining label. Of those, 8,031 have at least 1,000 impressions over 90 days. That is too many pages to inspect one by one. A poor pick uses time on a page that may not need work; a missed pick can leave a useful page unattended.</p>
+<p>This is a ranking exercise. It measures how often the first picks match observed decline. It does not measure traffic recovered, money saved, or the benefit of a rewrite.</p>
+<h3 id="warehouse-the-question">Warehouse: the question</h3>
+<p>The starter experiment asks which pages resemble an already observed decline. I now ask a harder question: <strong>can information from one month rank pages that will decline in the next month?</strong> This brings the review list closer to a decision made before the outcome is known.</p>
+<h2 id="data">Data</h2>
+<h3 id="starter-csv-data-and-safety">Starter CSV: data and safety</h3>
+<p>I use the bundled <code>data/raw/content_refresh_anonymized.csv</code>: 30,000 rows, 44 columns, and 32 pseudonymized clients. Search and engagement measurements cover a trailing 90-day window. The supplied CSV does not record exact calendar start and end dates, so I do not assign the warehouse release dates to it.</p>
+<p>The reference filter keeps pages with at least one impression and age of at least 90 days, then removes duplicate page IDs. All 30,000 rows pass. Unlike my week-2 candidate filter, this comparison retains pages with unavailable position to match the supplied capstone benchmark.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Measurement</th>
+<th>Pages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Word count missing</td>
+<td>7699</td>
+</tr>
+<tr>
+<td>Search-volume estimate missing</td>
+<td>2468</td>
+</tr>
+<tr>
+<td>Position unavailable (zero)</td>
+<td>1205</td>
+</tr>
+</tbody>
+</table></div>
+<p>Missing word count is not proof of short content. Position zero means no position measurement. Rates such as CTR are already percentages: 0.5 means 0.5%. Scroll rate and AI traffic share can exceed 100 because of their measurement definitions.</p>
+<p>Page and client IDs are used only for joining, checking uniqueness, and splitting. The report contains aggregates and broad review bands, with no client names, page addresses, raw queries, or pseudonymous ID values. Numeric keyword context is allowed; keyword text is absent. The file fingerprint and exact package versions are in the metrics receipt.</p>
+<h3 id="warehouse-release-tables-and-eligibility">Warehouse: release, tables, and eligibility</h3>
+<p>I use the <a href="https://huggingface.co/datasets/FlyRank/internship-warehouse/tree/50cbf7c3909d07be4d1b5906b4d09e882e5acbf2">FlyRank warehouse release v20260703</a>, pinned to its recorded revision. The full daily table has 78,835,655 rows, from 2025-01-27 to 2026-06-30. This experiment aggregates <strong>43,647,556 daily rows from March through June 2026</strong>. It does not train on every row in the full warehouse. Two small dimension-table extracts supply the client tracking start and content creation date.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Daily rows</th>
+<th>Page-month rows</th>
+<th>Excluded duplicate page-months</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-03</td>
+<td>9841378</td>
+<td>331437</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2026-04</td>
+<td>10424730</td>
+<td>362172</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2026-05</td>
+<td>11687376</td>
+<td>389153</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2026-06</td>
+<td>11694072</td>
+<td>409205</td>
+<td>355</td>
+</tr>
+</tbody>
+</table></div>
+<p>One model row is one eligible page at the end of a feature month. It must be at least 90 days old, have at least 500 impressions, and have usable search tracking for at least 90% of that month. The client's tracking must start on or before the first day of that month. I do not filter on current publication or deletion flags because they may describe a later state.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Feature month</th>
+<th>Page-months</th>
+<th>Tracking started</th>
+<th>90% coverage</th>
+<th>90+ days old</th>
+<th>500+ impressions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-03</td>
+<td>331437</td>
+<td>322135</td>
+<td>83842</td>
+<td>64624</td>
+<td>41512</td>
+</tr>
+<tr>
+<td>2026-04</td>
+<td>362172</td>
+<td>350708</td>
+<td>93265</td>
+<td>71454</td>
+<td>43644</td>
+</tr>
+<tr>
+<td>2026-05</td>
+<td>389153</td>
+<td>377273</td>
+<td>97109</td>
+<td>76161</td>
+<td>43695</td>
+</tr>
+</tbody>
+</table></div>
+<p>A tracking day is observed only when <code>gsc_data_available IS TRUE</code> and impressions and clicks are recorded. A measured zero stays zero; an unavailable day is not filled with zero. The cached summaries check the daily client-page-date grain before any features or labels are built. June contains 6,390 duplicate daily records in 355 page-months. The first evaluation stopped at that check, before computing June labels or metrics. The corrected quality policy excludes every affected page-month rather than guessing how to deduplicate it; the same rule is applied to all four months. The earlier model choice and validation results are preserved and checked against their original receipt. The cache keeps only the selected dimension fields and page-month summaries in ignored local Parquet files. No token or private IDs enter the paper.</p>
+<p>I leave out current update dates, current content length, current publication state, GA4 activity, and the fixed-window query table. They are not needed for this first forecast test, and their timing or coverage would need additional work. Content creation dates come from the snapshot; I assume those dates are historically stable. That is a stated assumption, not a reconstructed history of every page.</p>
+<h2 id="methodology">Methodology</h2>
+<h3 id="earlier-work-what-changed-my-thinking">Earlier work: what changed my thinking</h3>
+<p>In week 1, I settled on refresh review because the declining-page count was large. In week 2, I tried a stale-and-visible rule and small decision trees. The useful lesson was to compare actual results, rather than assume the more complex method would win.</p>
+<p>In weeks 3 and 4, I explored the March 2026 warehouse partition using daily search facts and content metadata. The saved outputs report 9,841,378 daily rows, 61,863 filtered pages, a 38.3% declining rate, and Precision@20 of 10.0%. These are historical notebook outputs, not numbers recomputed by this capstone. One later output says 10 wrong picks out of 20; 10% precision would imply 18 wrong picks. Those saved cells are inconsistent, so I do not use them as a verified result or mix them with the starter benchmark.</p>
+<p>There is also a method issue worth keeping visible. Those March features use the full month, including the second half that defines the label. Removing the named future-impressions column does not remove that overlap. The label compares 15 days with 16 days, and current metadata may not describe what was known halfway through March. Weak score-label correlation cannot certify that a feature is safe. An average position outside the first page also cannot establish that position has fallen.</p>
+<p>A future warehouse experiment should use features and eligible pages defined before the outcome, comparable exposure windows, and metadata known at the decision date. June was intended as a later test month in my earlier work; the warehouse extension below now evaluates a separately designed May-to-June forecast after model selection.</p>
+<h3 id="starter-csv-baseline">Starter CSV: baseline</h3>
+<p>The reference rule combines four things: visibility (40%), time since update (30%), position opportunity (25%), and a word-count gap (5%). It uses no fitted weights. Both it and the models are scored on exactly the same held-out pages and labels.</p>
+<p>Visibility and freshness are percentile ranks across this fixed sample. Position opportunity gives more weight to a measured position closer to the top, multiplied by visibility. The word-count gap is the inverse word-count percentile, also multiplied by visibility. These are simple priorities, not established causes of decline. The full formulas are in the notebook.</p>
+<p>My earlier rule is <code>stale x visible x impressions</code>. It produces 17 positive scores across the sample and 0 on the held-out clients. With no eligible held-out pages, every score there ties at zero. An arbitrary top 50 would measure file ordering, so I report no meaningful Precision@50 for that rule. Random tie-breaking would average the held-out declining rate (39.1%). This rule needs review before it could serve that group.</p>
+<p>For an exact reference comparison, the baseline percentiles and category vocabulary use the full sample, as the original pipeline does. No held-out labels enter fitting, but this is not a fully independent preprocessing test. A stricter deployment experiment would learn those transformations on training data only.</p>
+<p><figure><svg role="img" aria-label="baseline weights" xmlns:xlink="http://www.w3.org/1999/xlink" width="707.471875pt" height="276.24125pt" viewBox="0 0 707.471875 276.24125" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="baseline_weights-figure_1">
+  <g id="baseline_weights-patch_1">
+   <path d="M 0 276.24125 
+L 707.471875 276.24125 
+L 707.471875 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="baseline_weights-axes_1">
+   <g id="baseline_weights-patch_2">
+    <path d="M 134.636875 234.81375 
+L 692.636875 234.81375 
+L 692.636875 24.14175 
+L 134.636875 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="baseline_weights-patch_3">
+    <path d="M 134.636875 225.23775 
+L 190.436875 225.23775 
+L 190.436875 184.91775 
+L 134.636875 184.91775 
+z
+" clip-path="url(#baseline_weights-p273563c143)" style="fill: #64748b"/>
+   </g>
+   <g id="baseline_weights-patch_4">
+    <path d="M 134.636875 174.83775 
+L 413.636875 174.83775 
+L 413.636875 134.51775 
+L 134.636875 134.51775 
+z
+" clip-path="url(#baseline_weights-p273563c143)" style="fill: #087f8c"/>
+   </g>
+   <g id="baseline_weights-patch_5">
+    <path d="M 134.636875 124.43775 
+L 469.436875 124.43775 
+L 469.436875 84.11775 
+L 134.636875 84.11775 
+z
+" clip-path="url(#baseline_weights-p273563c143)" style="fill: #b45309"/>
+   </g>
+   <g id="baseline_weights-patch_6">
+    <path d="M 134.636875 74.03775 
+L 581.036875 74.03775 
+L 581.036875 33.71775 
+L 134.636875 33.71775 
+z
+" clip-path="url(#baseline_weights-p273563c143)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="baseline_weights-matplotlib.axis_1">
+    <g id="baseline_weights-xtick_1">
+     <g id="baseline_weights-line2d_1">
+      <defs>
+       <path id="baseline_weights-m3522c48f8c" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#baseline_weights-m3522c48f8c" x="134.636875" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_1">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="134.636875" y="250.931875" transform="rotate(-0 134.636875 250.931875)">0</text>
+     </g>
+    </g>
+    <g id="baseline_weights-xtick_2">
+     <g id="baseline_weights-line2d_2">
+      <g>
+       <use xlink:href="#baseline_weights-m3522c48f8c" x="246.236875" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_2">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="246.236875" y="250.931875" transform="rotate(-0 246.236875 250.931875)">10</text>
+     </g>
+    </g>
+    <g id="baseline_weights-xtick_3">
+     <g id="baseline_weights-line2d_3">
+      <g>
+       <use xlink:href="#baseline_weights-m3522c48f8c" x="357.836875" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_3">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="357.836875" y="250.931875" transform="rotate(-0 357.836875 250.931875)">20</text>
+     </g>
+    </g>
+    <g id="baseline_weights-xtick_4">
+     <g id="baseline_weights-line2d_4">
+      <g>
+       <use xlink:href="#baseline_weights-m3522c48f8c" x="469.436875" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_4">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="469.436875" y="250.931875" transform="rotate(-0 469.436875 250.931875)">30</text>
+     </g>
+    </g>
+    <g id="baseline_weights-xtick_5">
+     <g id="baseline_weights-line2d_5">
+      <g>
+       <use xlink:href="#baseline_weights-m3522c48f8c" x="581.036875" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_5">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="581.036875" y="250.931875" transform="rotate(-0 581.036875 250.931875)">40</text>
+     </g>
+    </g>
+    <g id="baseline_weights-xtick_6">
+     <g id="baseline_weights-line2d_6">
+      <g>
+       <use xlink:href="#baseline_weights-m3522c48f8c" x="692.636875" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_6">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="692.636875" y="250.931875" transform="rotate(-0 692.636875 250.931875)">50</text>
+     </g>
+    </g>
+    <g id="baseline_weights-text_7">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="413.636875" y="266.545625" transform="rotate(-0 413.636875 266.545625)">Weight in the reference score (%)</text>
+    </g>
+   </g>
+   <g id="baseline_weights-matplotlib.axis_2">
+    <g id="baseline_weights-ytick_1">
+     <g id="baseline_weights-line2d_7">
+      <defs>
+       <path id="baseline_weights-m094dcd8984" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#baseline_weights-m094dcd8984" x="134.636875" y="205.07775" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_8">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="127.636875" y="209.636812" transform="rotate(-0 127.636875 209.636812)">Word-count gap</text>
+     </g>
+    </g>
+    <g id="baseline_weights-ytick_2">
+     <g id="baseline_weights-line2d_8">
+      <g>
+       <use xlink:href="#baseline_weights-m094dcd8984" x="134.636875" y="154.67775" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_9">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="127.636875" y="159.236812" transform="rotate(-0 127.636875 159.236812)">Position opportunity</text>
+     </g>
+    </g>
+    <g id="baseline_weights-ytick_3">
+     <g id="baseline_weights-line2d_9">
+      <g>
+       <use xlink:href="#baseline_weights-m094dcd8984" x="134.636875" y="104.27775" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_10">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="127.636875" y="108.836813" transform="rotate(-0 127.636875 108.836813)">Time since update</text>
+     </g>
+    </g>
+    <g id="baseline_weights-ytick_4">
+     <g id="baseline_weights-line2d_10">
+      <g>
+       <use xlink:href="#baseline_weights-m094dcd8984" x="134.636875" y="53.87775" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="baseline_weights-text_11">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="127.636875" y="58.436813" transform="rotate(-0 127.636875 58.436813)">Visibility</text>
+     </g>
+    </g>
+   </g>
+   <g id="baseline_weights-patch_7">
+    <path d="M 134.636875 234.81375 
+L 134.636875 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="baseline_weights-patch_8">
+    <path d="M 134.636875 234.81375 
+L 692.636875 234.81375 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="baseline_weights-text_12">
+    <text style="font: 12px 'DejaVu Sans'; text-anchor: start" x="197.132875" y="208.389" transform="rotate(-0 197.132875 208.389)">5%</text>
+   </g>
+   <g id="baseline_weights-text_13">
+    <text style="font: 12px 'DejaVu Sans'; text-anchor: start" x="420.332875" y="157.989" transform="rotate(-0 420.332875 157.989)">25%</text>
+   </g>
+   <g id="baseline_weights-text_14">
+    <text style="font: 12px 'DejaVu Sans'; text-anchor: start" x="476.132875" y="107.589" transform="rotate(-0 476.132875 107.589)">30%</text>
+   </g>
+   <g id="baseline_weights-text_15">
+    <text style="font: 12px 'DejaVu Sans'; text-anchor: start" x="587.732875" y="57.189" transform="rotate(-0 587.732875 57.189)">40%</text>
+   </g>
+   <g id="baseline_weights-text_16">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="413.636875" y="18.14175" transform="rotate(-0 413.636875 18.14175)">The baseline is a rule I can explain</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="baseline_weights-p273563c143">
+   <rect x="134.636875" y="24.14175" width="558" height="210.672"/>
+  </clipPath>
+ </defs>
+</svg>
+</figure></p>
+<p><em>Figure 1. These are fixed policy weights, not learned effects or a measure of traffic recovery.</em></p>
+<h3 id="starter-csv-methodology-and-model">Starter CSV: methodology and model</h3>
+<p>The target is <code>is_declining_label = (trend_direction == 'down')</code>. The data dictionary defines down as a fall of more than 20% in last-30-day impressions relative to the preceding 30 days. This is a rule-based summary of observed traffic, not a label saying that an editor should rewrite a page.</p>
+<p>I compare logistic regression, a depth-5 decision tree, and a random forest with 200 trees, depth 10, and at least 25 rows per leaf. The decision tree has at least 50 rows per leaf. The models use class balancing; logistic regression standardizes its inputs using training rows. Seed 42 fixes the client shuffle and model randomness.</p>
+<p><strong>Numeric inputs (18):</strong> <code>search_volume</code>, <code>competition</code>, <code>cpc</code>, <code>word_count</code>, <code>char_count</code>, <code>log_impressions_90d</code>, <code>log_clicks_90d</code>, <code>log_sessions_90d</code>, <code>log_ai_sessions_90d</code>, <code>days_with_impressions</code>, <code>days_with_sessions</code>, <code>content_age_days</code>, <code>days_since_last_update</code>, <code>ctr</code>, <code>avg_position</code>, <code>engagement_rate</code>, <code>scroll_rate</code>, <code>ai_traffic_pct</code>.</p>
+<p><strong>Categorical inputs (8):</strong> <code>competition_level</code>, <code>content_type</code>, <code>main_intent</code>, <code>age_tier</code>, <code>freshness_tier</code>, <code>word_count_tier</code>, <code>impression_tier</code>, <code>position_tier</code>.</p>
+<p>These become 52 encoded model columns. The reference preparation fills numeric gaps with zero and missing categories with <code>unknown</code>; it logs four traffic totals with <code>log1p</code>. I retain this policy to reproduce the benchmark, but zero can mix missing measurements with real zeros. Missingness indicators and training-only imputation are useful next checks, not improvements measured here.</p>
+<p>Direct trend fields, the six 30-day comparison inputs, IDs, provider/model metadata, and product scores are excluded from model inputs. That check does not establish temporal independence: the retained 90-day totals overlap the recent label window.</p>
+<p>The split holds out 6 of 32 whole clients: 27,675 training pages and 2,325 held-out pages. It is about 20% of clients, not 20% of pages. I compare candidates by Precision@50 on this same split, so it is a development holdout used for selection. It is not an untouched final test, and it does not test future months.</p>
+<p><figure><svg role="img" aria-label="time windows" xmlns:xlink="http://www.w3.org/1999/xlink" width="806.004063pt" height="260.6275pt" viewBox="0 0 806.004063 260.6275" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="time_windows-figure_1">
+  <g id="time_windows-patch_1">
+   <path d="M 0 260.6275 
+L 806.004063 260.6275 
+L 806.004063 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="time_windows-axes_1">
+   <g id="time_windows-patch_2">
+    <path d="M 156.955 234.81375 
+L 770.755 234.81375 
+L 770.755 24.14175 
+L 156.955 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="time_windows-PolyCollection_1">
+    <path d="M 156.955 83.39325 
+L 156.955 47.184 
+L 770.755 47.184 
+L 770.755 83.39325 
+z
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="time_windows-PolyCollection_2">
+    <path d="M 361.555 149.22825 
+L 361.555 113.019 
+L 566.155 113.019 
+L 566.155 149.22825 
+z
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: #087f8c"/>
+   </g>
+   <g id="time_windows-PolyCollection_3">
+    <path d="M 566.155 215.06325 
+L 566.155 178.854 
+L 770.755 178.854 
+L 770.755 215.06325 
+z
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: #b45309"/>
+   </g>
+   <g id="time_windows-matplotlib.axis_1">
+    <g id="time_windows-xtick_1">
+     <g id="time_windows-line2d_1">
+      <path d="M 156.955 234.81375 
+L 156.955 24.14175 
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="time_windows-line2d_2">
+      <defs>
+       <path id="time_windows-m4b70ab60f4" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#time_windows-m4b70ab60f4" x="156.955" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_1">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="156.955" y="250.931875" transform="rotate(-0 156.955 250.931875)">90 days before</text>
+     </g>
+    </g>
+    <g id="time_windows-xtick_2">
+     <g id="time_windows-line2d_3">
+      <path d="M 361.555 234.81375 
+L 361.555 24.14175 
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="time_windows-line2d_4">
+      <g>
+       <use xlink:href="#time_windows-m4b70ab60f4" x="361.555" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_2">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="361.555" y="250.931875" transform="rotate(-0 361.555 250.931875)">60 days before</text>
+     </g>
+    </g>
+    <g id="time_windows-xtick_3">
+     <g id="time_windows-line2d_5">
+      <path d="M 566.155 234.81375 
+L 566.155 24.14175 
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="time_windows-line2d_6">
+      <g>
+       <use xlink:href="#time_windows-m4b70ab60f4" x="566.155" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_3">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="566.155" y="250.931875" transform="rotate(-0 566.155 250.931875)">30 days before</text>
+     </g>
+    </g>
+    <g id="time_windows-xtick_4">
+     <g id="time_windows-line2d_7">
+      <path d="M 770.755 234.81375 
+L 770.755 24.14175 
+" clip-path="url(#time_windows-pd576e96dd7)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="time_windows-line2d_8">
+      <g>
+       <use xlink:href="#time_windows-m4b70ab60f4" x="770.755" y="234.81375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_4">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="770.755" y="250.931875" transform="rotate(-0 770.755 250.931875)">Snapshot</text>
+     </g>
+    </g>
+   </g>
+   <g id="time_windows-matplotlib.axis_2">
+    <g id="time_windows-ytick_1">
+     <g id="time_windows-line2d_9">
+      <defs>
+       <path id="time_windows-mdeb4a6cd12" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#time_windows-mdeb4a6cd12" x="156.955" y="196.958625" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_5">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="149.955" y="201.517688" transform="rotate(-0 149.955 201.517688)">Label: recent 30 days</text>
+     </g>
+    </g>
+    <g id="time_windows-ytick_2">
+     <g id="time_windows-line2d_10">
+      <g>
+       <use xlink:href="#time_windows-mdeb4a6cd12" x="156.955" y="131.123625" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_6">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="149.955" y="135.682687" transform="rotate(-0 149.955 135.682687)">Label: previous 30 days</text>
+     </g>
+    </g>
+    <g id="time_windows-ytick_3">
+     <g id="time_windows-line2d_11">
+      <g>
+       <use xlink:href="#time_windows-mdeb4a6cd12" x="156.955" y="65.288625" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="time_windows-text_7">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="149.955" y="69.847688" transform="rotate(-0 149.955 69.847688)">Model: trailing 90 days</text>
+     </g>
+    </g>
+   </g>
+   <g id="time_windows-patch_3">
+    <path d="M 156.955 234.81375 
+L 156.955 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="time_windows-patch_4">
+    <path d="M 156.955 234.81375 
+L 770.755 234.81375 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="time_windows-text_8">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="463.855" y="18.14175" transform="rotate(-0 463.855 18.14175)">The feature window includes the label period</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="time_windows-pd576e96dd7">
+   <rect x="156.955" y="24.14175" width="613.8" height="210.672"/>
+  </clipPath>
+ </defs>
+</svg>
+</figure></p>
+<p><em>Figure 2. The last two windows define observed decline. Their overlap with model inputs rules out a future-prediction claim.</em></p>
+<h3 id="warehouse-predict-a-later-window">Warehouse: predict a later window</h3>
+<p>The label is 1 when <strong>next-month impressions per observed day are more than 20% below feature-month impressions per observed day</strong>. Dividing by observed days accounts for different month lengths and recorded exposure. I require 90% tracking coverage in the outcome month to evaluate the label; that conditions the result on measurable later history.</p>
+<p>The inputs are ten measurements from the feature month: logged impressions, logged clicks, CTR, impression-weighted position, the shares of days with impressions and clicks, daily impression variability, the change between the two half-month daily rates, tracking coverage, and age at month end. Half-month change is capped between -100% and +1,000% to limit extreme ratios. Undefined ratios remain missing, then receive a training-fitted median and a missingness flag. No outcome measurements or identifiers are model inputs.</p>
+<p><strong>Two transparent baselines.</strong> The momentum rule ranks pages by <code>max(0, -past_half_month_change) x log1p(month_impressions)</code>. It prioritizes a recent drop with visible demand. The volume rule simply ranks by feature-month impressions. These are different from the CSV's four-part baseline: its stale-content inputs do not have a reliable historical equivalent here.</p>
+<p>I compare logistic regression, a depth-5 decision tree, and a 200-tree random forest with depth 8 and at least 50 rows per leaf. The tree also requires 50 rows per leaf. The models use class balancing and seed 42. Numeric filling, missingness flags, and logistic-regression scaling are fitted on training data only.</p>
+<p><strong>Three separate groups of clients.</strong> I shuffle the 28 clients eligible in March once with seed 42 and assign approximately 60% to training, 20% to validation, and 20% to the final check. Training uses March features and April outcomes (32,771 pages; 16 observed clients). Validation uses April features and May outcomes (1,373 pages; 6 observed clients). I select the model there, record the choice, then refit on 69,474 March-April and April-May page-periods from training and validation clients. Final evaluation uses May features and June outcomes from 6 clients excluded from both earlier groups.</p>
+<p>I score the eligible May pages before loading June outcomes. Of 5,886 eligible test candidates, 5,696 have enough June tracking to evaluate and 190 do not. The reported ranking metrics apply to the evaluable set. Reruns reproduce this recorded evaluation; they do not create a newly blind test each time.</p>
+<p><figure><svg role="img" aria-label="warehouse windows" xmlns:xlink="http://www.w3.org/1999/xlink" width="776.835625pt" height="277.2595pt" viewBox="0 0 776.835625 277.2595" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="warehouse_windows-figure_1">
+  <g id="warehouse_windows-patch_1">
+   <path d="M 0 277.2595 
+L 776.835625 277.2595 
+L 776.835625 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="warehouse_windows-axes_1">
+   <g id="warehouse_windows-patch_2">
+    <path d="M 139.320625 251.44575 
+L 753.120625 251.44575 
+L 753.120625 24.14175 
+L 139.320625 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="warehouse_windows-PolyCollection_1">
+    <path d="M 139.320625 112.03263 
+L 139.320625 78.69471 
+L 295.286199 78.69471 
+L 295.286199 112.03263 
+z
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="warehouse_windows-PolyCollection_2">
+    <path d="M 295.286199 112.03263 
+L 295.286199 78.69471 
+L 446.220625 78.69471 
+L 446.220625 112.03263 
+z
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: #b45309"/>
+   </g>
+   <g id="warehouse_windows-PolyCollection_3">
+    <path d="M 295.286199 172.64703 
+L 295.286199 139.30911 
+L 446.220625 139.30911 
+L 446.220625 172.64703 
+z
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="warehouse_windows-PolyCollection_4">
+    <path d="M 446.220625 172.64703 
+L 446.220625 139.30911 
+L 602.186199 139.30911 
+L 602.186199 172.64703 
+z
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: #b45309"/>
+   </g>
+   <g id="warehouse_windows-PolyCollection_5">
+    <path d="M 446.220625 233.26143 
+L 446.220625 199.92351 
+L 602.186199 199.92351 
+L 602.186199 233.26143 
+z
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="warehouse_windows-PolyCollection_6">
+    <path d="M 602.186199 233.26143 
+L 602.186199 199.92351 
+L 753.120625 199.92351 
+L 753.120625 233.26143 
+z
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: #b45309"/>
+   </g>
+   <g id="warehouse_windows-matplotlib.axis_1">
+    <g id="warehouse_windows-xtick_1">
+     <g id="warehouse_windows-line2d_1">
+      <path d="M 139.320625 251.44575 
+L 139.320625 24.14175 
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="warehouse_windows-line2d_2">
+      <defs>
+       <path id="warehouse_windows-m90e5a19a1b" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#warehouse_windows-m90e5a19a1b" x="139.320625" y="251.44575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_1">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="139.320625" y="267.563875" transform="rotate(-0 139.320625 267.563875)">1 March</text>
+     </g>
+    </g>
+    <g id="warehouse_windows-xtick_2">
+     <g id="warehouse_windows-line2d_3">
+      <path d="M 295.286199 251.44575 
+L 295.286199 24.14175 
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="warehouse_windows-line2d_4">
+      <g>
+       <use xlink:href="#warehouse_windows-m90e5a19a1b" x="295.286199" y="251.44575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_2">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="295.286199" y="267.563875" transform="rotate(-0 295.286199 267.563875)">1 April</text>
+     </g>
+    </g>
+    <g id="warehouse_windows-xtick_3">
+     <g id="warehouse_windows-line2d_5">
+      <path d="M 446.220625 251.44575 
+L 446.220625 24.14175 
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="warehouse_windows-line2d_6">
+      <g>
+       <use xlink:href="#warehouse_windows-m90e5a19a1b" x="446.220625" y="251.44575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_3">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="446.220625" y="267.563875" transform="rotate(-0 446.220625 267.563875)">1 May</text>
+     </g>
+    </g>
+    <g id="warehouse_windows-xtick_4">
+     <g id="warehouse_windows-line2d_7">
+      <path d="M 602.186199 251.44575 
+L 602.186199 24.14175 
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="warehouse_windows-line2d_8">
+      <g>
+       <use xlink:href="#warehouse_windows-m90e5a19a1b" x="602.186199" y="251.44575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_4">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="602.186199" y="267.563875" transform="rotate(-0 602.186199 267.563875)">1 June</text>
+     </g>
+    </g>
+    <g id="warehouse_windows-xtick_5">
+     <g id="warehouse_windows-line2d_9">
+      <path d="M 753.120625 251.44575 
+L 753.120625 24.14175 
+" clip-path="url(#warehouse_windows-p440cc97dcb)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.2; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="warehouse_windows-line2d_10">
+      <g>
+       <use xlink:href="#warehouse_windows-m90e5a19a1b" x="753.120625" y="251.44575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_5">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="753.120625" y="267.563875" transform="rotate(-0 753.120625 267.563875)">1 July</text>
+     </g>
+    </g>
+   </g>
+   <g id="warehouse_windows-matplotlib.axis_2">
+    <g id="warehouse_windows-ytick_1">
+     <g id="warehouse_windows-line2d_11">
+      <defs>
+       <path id="warehouse_windows-m8ffe6dc23b" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#warehouse_windows-m8ffe6dc23b" x="139.320625" y="216.59247" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_6">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="132.320625" y="221.151533" transform="rotate(-0 132.320625 221.151533)">Final check: 6 clients</text>
+     </g>
+    </g>
+    <g id="warehouse_windows-ytick_2">
+     <g id="warehouse_windows-line2d_12">
+      <g>
+       <use xlink:href="#warehouse_windows-m8ffe6dc23b" x="139.320625" y="155.97807" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_7">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="132.320625" y="160.537132" transform="rotate(-0 132.320625 160.537132)">Validation: 6 clients</text>
+     </g>
+    </g>
+    <g id="warehouse_windows-ytick_3">
+     <g id="warehouse_windows-line2d_13">
+      <g>
+       <use xlink:href="#warehouse_windows-m8ffe6dc23b" x="139.320625" y="95.36367" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="warehouse_windows-text_8">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="132.320625" y="99.922733" transform="rotate(-0 132.320625 99.922733)">Training: 16 clients</text>
+     </g>
+    </g>
+   </g>
+   <g id="warehouse_windows-line2d_14"/>
+   <g id="warehouse_windows-line2d_15"/>
+   <g id="warehouse_windows-patch_3">
+    <path d="M 139.320625 251.44575 
+L 139.320625 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="warehouse_windows-patch_4">
+    <path d="M 139.320625 251.44575 
+L 753.120625 251.44575 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="warehouse_windows-text_9">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="446.220625" y="18.14175" transform="rotate(-0 446.220625 18.14175)">The warehouse test looks forward in time</text>
+   </g>
+   <g id="warehouse_windows-legend_1">
+    <g id="warehouse_windows-patch_5">
+     <path d="M 146.320625 46.819875 
+L 461.453438 46.819875 
+Q 463.453438 46.819875 463.453438 44.819875 
+L 463.453438 31.14175 
+Q 463.453438 29.14175 461.453438 29.14175 
+L 146.320625 29.14175 
+Q 144.320625 29.14175 144.320625 31.14175 
+L 144.320625 44.819875 
+Q 144.320625 46.819875 146.320625 46.819875 
+z
+" style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
+    </g>
+    <g id="warehouse_windows-line2d_16">
+     <path d="M 148.320625 37.240187 
+L 158.320625 37.240187 
+L 168.320625 37.240187 
+" style="fill: none; stroke: #1d4ed8; stroke-width: 8; stroke-linecap: square"/>
+    </g>
+    <g id="warehouse_windows-text_10">
+     <text style="font: 10px 'DejaVu Sans'; text-anchor: start" x="176.320625" y="40.740187" transform="rotate(-0 176.320625 40.740187)">Features available at month end</text>
+    </g>
+    <g id="warehouse_windows-line2d_17">
+     <path d="M 358.503438 37.240187 
+L 368.503438 37.240187 
+L 378.503438 37.240187 
+" style="fill: none; stroke: #b45309; stroke-width: 8; stroke-linecap: square"/>
+    </g>
+    <g id="warehouse_windows-text_11">
+     <text style="font: 10px 'DejaVu Sans'; text-anchor: start" x="386.503438" y="40.740187" transform="rotate(-0 386.503438 40.740187)">Later outcome</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="warehouse_windows-p440cc97dcb">
+   <rect x="139.320625" y="24.14175" width="613.8" height="227.304"/>
+  </clipPath>
+ </defs>
+</svg>
+</figure></p>
+<p><em>Figure 5. Feature and outcome months are separate. Final-test clients are excluded from training and validation; refitting uses only outcomes through May.</em></p>
+<h2 id="results">Results</h2>
+<h3 id="starter-csv-results-and-evaluation">Starter CSV: results and evaluation</h3>
+<p>The strongest candidate in this run is <strong>random forest</strong>. It finds <strong>37 declining pages in its first 50 picks</strong>, compared with <strong>12 for the reference rule</strong>. That is 25 additional matches to the historical label, or 50.0 percentage points in Precision@50.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>P@20</th>
+<th>P@50</th>
+<th>P@100</th>
+<th>ROC AUC</th>
+<th>Average precision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>baseline rules</td>
+<td>0.150</td>
+<td>0.240</td>
+<td>0.360</td>
+<td>0.627</td>
+<td>0.468</td>
+</tr>
+<tr>
+<td>logistic regression</td>
+<td>0.350</td>
+<td>0.400</td>
+<td>0.440</td>
+<td>0.700</td>
+<td>0.522</td>
+</tr>
+<tr>
+<td>decision tree</td>
+<td>0.550</td>
+<td>0.620</td>
+<td>0.600</td>
+<td>0.742</td>
+<td>0.575</td>
+</tr>
+<tr>
+<td>random forest</td>
+<td>0.650</td>
+<td>0.740</td>
+<td>0.720</td>
+<td>0.750</td>
+<td>0.618</td>
+</tr>
+</tbody>
+</table></div>
+<p>The held-out declining rate is <strong>39.1% (909/2,325)</strong>. Random selection would average 19.5 declining pages in 50 picks; this is an expectation, not another trained model. The majority class is not declining, giving <strong>60.9%</strong> accuracy if every page is assigned that class. The full sample declining rate of 54.2% belongs to a different population.</p>
+<p>The supplied metrics file recorded random-forest Precision@50 of 74% and baseline Precision@50 of 24%. I preserve that original receipt and report the fresh values above. The reference ranking helper uses pandas score sorting. A shallow tree has many tied scores, so its top-K result can change with ordering or library versions even when ROC AUC is unchanged. For this run, the tree's top-50 precision can range from 2.0% to 98.0% across valid orders of the boundary ties. The metrics receipt records tie bounds for each method.</p>
+<p>This is one grouped development comparison. I have not measured uncertainty across repeated client splits, and I do not claim that the observed margin is statistically significant.</p>
+<p><figure><svg role="img" aria-label="precision comparison" xmlns:xlink="http://www.w3.org/1999/xlink" width="851.26875pt" height="331.52925pt" viewBox="0 0 851.26875 331.52925" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="precision_comparison-figure_1">
+  <g id="precision_comparison-patch_1">
+   <path d="M 0 331.52925 
+L 851.26875 331.52925 
+L 851.26875 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="precision_comparison-axes_1">
+   <g id="precision_comparison-patch_2">
+    <path d="M 52.71875 290.10175 
+L 393.025727 290.10175 
+L 393.025727 24.14175 
+L 52.71875 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="precision_comparison-patch_3">
+    <path d="M 68.187249 290.10175 
+L 137.735539 290.10175 
+L 137.735539 226.27135 
+L 68.187249 226.27135 
+z
+" clip-path="url(#precision_comparison-pa22573a208)" style="fill: #64748b"/>
+   </g>
+   <g id="precision_comparison-patch_4">
+    <path d="M 188.098093 290.10175 
+L 257.646383 290.10175 
+L 257.646383 186.119969 
+L 188.098093 186.119969 
+z
+" clip-path="url(#precision_comparison-pa22573a208)" style="fill: #b45309"/>
+   </g>
+   <g id="precision_comparison-patch_5">
+    <path d="M 308.008938 290.10175 
+L 377.557228 290.10175 
+L 377.557228 93.29135 
+L 308.008938 93.29135 
+z
+" clip-path="url(#precision_comparison-pa22573a208)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="precision_comparison-matplotlib.axis_1">
+    <g id="precision_comparison-xtick_1">
+     <g id="precision_comparison-line2d_1">
+      <defs>
+       <path id="precision_comparison-mf1929637f3" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#precision_comparison-mf1929637f3" x="102.961394" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_1">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="102.961394" y="306.219875" transform="rotate(-0 102.961394 306.219875)">Repo rule</text>
+     </g>
+    </g>
+    <g id="precision_comparison-xtick_2">
+     <g id="precision_comparison-line2d_2">
+      <g>
+       <use xlink:href="#precision_comparison-mf1929637f3" x="222.872238" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_2">
+      <text style="font: 12px 'DejaVu Sans'" transform="translate(198.034113 306.219875)">Random</text>
+      <text style="font: 12px 'DejaVu Sans'" transform="translate(187.412238 319.65725)">expectation</text>
+     </g>
+    </g>
+    <g id="precision_comparison-xtick_3">
+     <g id="precision_comparison-line2d_3">
+      <g>
+       <use xlink:href="#precision_comparison-mf1929637f3" x="342.783083" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_3">
+      <text style="font: 12px 'DejaVu Sans'" transform="translate(316.771208 306.219875)">Selected</text>
+      <text style="font: 12px 'DejaVu Sans'" transform="translate(324.099645 319.65725)">model</text>
+     </g>
+    </g>
+   </g>
+   <g id="precision_comparison-matplotlib.axis_2">
+    <g id="precision_comparison-ytick_1">
+     <g id="precision_comparison-line2d_4">
+      <defs>
+       <path id="precision_comparison-m0a931c77cb" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="52.71875" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_4">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="294.660813" transform="rotate(-0 45.71875 294.660813)">0</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_2">
+     <g id="precision_comparison-line2d_5">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="52.71875" y="236.90975" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_5">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="241.468813" transform="rotate(-0 45.71875 241.468813)">20</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_3">
+     <g id="precision_comparison-line2d_6">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="52.71875" y="183.71775" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_6">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="188.276813" transform="rotate(-0 45.71875 188.276813)">40</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_4">
+     <g id="precision_comparison-line2d_7">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="52.71875" y="130.52575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_7">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="135.084813" transform="rotate(-0 45.71875 135.084813)">60</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_5">
+     <g id="precision_comparison-line2d_8">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="52.71875" y="77.33375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_8">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="81.892813" transform="rotate(-0 45.71875 81.892813)">80</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_6">
+     <g id="precision_comparison-line2d_9">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="52.71875" y="24.14175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_9">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="28.700813" transform="rotate(-0 45.71875 28.700813)">100</text>
+     </g>
+    </g>
+    <g id="precision_comparison-text_10">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="16.318125" y="157.12175" transform="rotate(-90 16.318125 157.12175)">Declining pages in the top 50 (%)</text>
+    </g>
+   </g>
+   <g id="precision_comparison-patch_6">
+    <path d="M 52.71875 290.10175 
+L 52.71875 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="precision_comparison-patch_7">
+    <path d="M 52.71875 290.10175 
+L 393.025727 290.10175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="precision_comparison-text_11">
+    <text style="font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="102.961394" y="220.95215" transform="rotate(-0 102.961394 220.95215)">24.0%</text>
+   </g>
+   <g id="precision_comparison-text_12">
+    <text style="font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="222.872238" y="180.800769" transform="rotate(-0 222.872238 180.800769)">39.1%</text>
+   </g>
+   <g id="precision_comparison-text_13">
+    <text style="font: 700 12px 'DejaVu Sans'; text-anchor: middle" x="342.783083" y="87.97215" transform="rotate(-0 342.783083 87.97215)">74.0%</text>
+   </g>
+   <g id="precision_comparison-text_14">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="222.872238" y="18.14175" transform="rotate(-0 222.872238 18.14175)">What 50 review slots return</text>
+   </g>
+  </g>
+  <g id="precision_comparison-axes_2">
+   <g id="precision_comparison-patch_8">
+    <path d="M 452.715727 290.10175 
+L 844.06875 290.10175 
+L 844.06875 24.14175 
+L 452.715727 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="precision_comparison-matplotlib.axis_3">
+    <g id="precision_comparison-xtick_4">
+     <g id="precision_comparison-line2d_10">
+      <path d="M 470.504501 290.10175 
+L 470.504501 24.14175 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_11">
+      <g>
+       <use xlink:href="#precision_comparison-mf1929637f3" x="470.504501" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_15">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="470.504501" y="306.219875" transform="rotate(-0 470.504501 306.219875)">20</text>
+     </g>
+    </g>
+    <g id="precision_comparison-xtick_5">
+     <g id="precision_comparison-line2d_12">
+      <path d="M 603.920304 290.10175 
+L 603.920304 24.14175 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_13">
+      <g>
+       <use xlink:href="#precision_comparison-mf1929637f3" x="603.920304" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_16">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="603.920304" y="306.219875" transform="rotate(-0 603.920304 306.219875)">50</text>
+     </g>
+    </g>
+    <g id="precision_comparison-xtick_6">
+     <g id="precision_comparison-line2d_14">
+      <path d="M 826.279976 290.10175 
+L 826.279976 24.14175 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_15">
+      <g>
+       <use xlink:href="#precision_comparison-mf1929637f3" x="826.279976" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_17">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="826.279976" y="306.219875" transform="rotate(-0 826.279976 306.219875)">100</text>
+     </g>
+    </g>
+    <g id="precision_comparison-text_18">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="648.392238" y="321.833625" transform="rotate(-0 648.392238 321.833625)">Number of pages reviewed (K)</text>
+    </g>
+   </g>
+   <g id="precision_comparison-matplotlib.axis_4">
+    <g id="precision_comparison-ytick_7">
+     <g id="precision_comparison-line2d_16">
+      <path d="M 452.715727 290.10175 
+L 844.06875 290.10175 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_17">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="452.715727" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_19">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="445.715727" y="294.660813" transform="rotate(-0 445.715727 294.660813)">0</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_8">
+     <g id="precision_comparison-line2d_18">
+      <path d="M 452.715727 236.90975 
+L 844.06875 236.90975 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_19">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="452.715727" y="236.90975" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_20">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="445.715727" y="241.468813" transform="rotate(-0 445.715727 241.468813)">20</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_9">
+     <g id="precision_comparison-line2d_20">
+      <path d="M 452.715727 183.71775 
+L 844.06875 183.71775 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_21">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="452.715727" y="183.71775" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_21">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="445.715727" y="188.276813" transform="rotate(-0 445.715727 188.276813)">40</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_10">
+     <g id="precision_comparison-line2d_22">
+      <path d="M 452.715727 130.52575 
+L 844.06875 130.52575 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_23">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="452.715727" y="130.52575" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_22">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="445.715727" y="135.084813" transform="rotate(-0 445.715727 135.084813)">60</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_11">
+     <g id="precision_comparison-line2d_24">
+      <path d="M 452.715727 77.33375 
+L 844.06875 77.33375 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_25">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="452.715727" y="77.33375" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_23">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="445.715727" y="81.892813" transform="rotate(-0 445.715727 81.892813)">80</text>
+     </g>
+    </g>
+    <g id="precision_comparison-ytick_12">
+     <g id="precision_comparison-line2d_26">
+      <path d="M 452.715727 24.14175 
+L 844.06875 24.14175 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="precision_comparison-line2d_27">
+      <g>
+       <use xlink:href="#precision_comparison-m0a931c77cb" x="452.715727" y="24.14175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="precision_comparison-text_24">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="445.715727" y="28.700813" transform="rotate(-0 445.715727 28.700813)">100</text>
+     </g>
+    </g>
+    <g id="precision_comparison-text_25">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="416.315102" y="157.12175" transform="rotate(-90 416.315102 157.12175)">Precision@K (%)</text>
+    </g>
+   </g>
+   <g id="precision_comparison-line2d_28">
+    <path d="M 470.504501 250.20775 
+L 603.920304 226.27135 
+L 826.279976 194.35615 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #64748b; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="precision_comparison-m6b8fc5331e" d="M 0 3 
+C 0.795609 3 1.55874 2.683901 2.12132 2.12132 
+C 2.683901 1.55874 3 0.795609 3 0 
+C 3 -0.795609 2.683901 -1.55874 2.12132 -2.12132 
+C 1.55874 -2.683901 0.795609 -3 0 -3 
+C -0.795609 -3 -1.55874 -2.683901 -2.12132 -2.12132 
+C -2.683901 -1.55874 -3 -0.795609 -3 0 
+C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
+C -1.55874 2.683901 -0.795609 3 0 3 
+z
+" style="stroke: #64748b"/>
+    </defs>
+    <g clip-path="url(#precision_comparison-pbbaf69fff0)">
+     <use xlink:href="#precision_comparison-m6b8fc5331e" x="470.504501" y="250.20775" style="fill: #64748b; stroke: #64748b"/>
+     <use xlink:href="#precision_comparison-m6b8fc5331e" x="603.920304" y="226.27135" style="fill: #64748b; stroke: #64748b"/>
+     <use xlink:href="#precision_comparison-m6b8fc5331e" x="826.279976" y="194.35615" style="fill: #64748b; stroke: #64748b"/>
+    </g>
+   </g>
+   <g id="precision_comparison-line2d_29">
+    <path d="M 470.504501 197.01575 
+L 603.920304 183.71775 
+L 826.279976 173.07935 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #b45309; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="precision_comparison-ma9416407e0" d="M 0 3 
+C 0.795609 3 1.55874 2.683901 2.12132 2.12132 
+C 2.683901 1.55874 3 0.795609 3 0 
+C 3 -0.795609 2.683901 -1.55874 2.12132 -2.12132 
+C 1.55874 -2.683901 0.795609 -3 0 -3 
+C -0.795609 -3 -1.55874 -2.683901 -2.12132 -2.12132 
+C -2.683901 -1.55874 -3 -0.795609 -3 0 
+C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
+C -1.55874 2.683901 -0.795609 3 0 3 
+z
+" style="stroke: #b45309"/>
+    </defs>
+    <g clip-path="url(#precision_comparison-pbbaf69fff0)">
+     <use xlink:href="#precision_comparison-ma9416407e0" x="470.504501" y="197.01575" style="fill: #b45309; stroke: #b45309"/>
+     <use xlink:href="#precision_comparison-ma9416407e0" x="603.920304" y="183.71775" style="fill: #b45309; stroke: #b45309"/>
+     <use xlink:href="#precision_comparison-ma9416407e0" x="826.279976" y="173.07935" style="fill: #b45309; stroke: #b45309"/>
+    </g>
+   </g>
+   <g id="precision_comparison-line2d_30">
+    <path d="M 470.504501 143.82375 
+L 603.920304 125.20655 
+L 826.279976 130.52575 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #087f8c; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="precision_comparison-m308ac8ba1a" d="M 0 3 
+C 0.795609 3 1.55874 2.683901 2.12132 2.12132 
+C 2.683901 1.55874 3 0.795609 3 0 
+C 3 -0.795609 2.683901 -1.55874 2.12132 -2.12132 
+C 1.55874 -2.683901 0.795609 -3 0 -3 
+C -0.795609 -3 -1.55874 -2.683901 -2.12132 -2.12132 
+C -2.683901 -1.55874 -3 -0.795609 -3 0 
+C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
+C -1.55874 2.683901 -0.795609 3 0 3 
+z
+" style="stroke: #087f8c"/>
+    </defs>
+    <g clip-path="url(#precision_comparison-pbbaf69fff0)">
+     <use xlink:href="#precision_comparison-m308ac8ba1a" x="470.504501" y="143.82375" style="fill: #087f8c; stroke: #087f8c"/>
+     <use xlink:href="#precision_comparison-m308ac8ba1a" x="603.920304" y="125.20655" style="fill: #087f8c; stroke: #087f8c"/>
+     <use xlink:href="#precision_comparison-m308ac8ba1a" x="826.279976" y="130.52575" style="fill: #087f8c; stroke: #087f8c"/>
+    </g>
+   </g>
+   <g id="precision_comparison-line2d_31">
+    <path d="M 470.504501 117.22775 
+L 603.920304 93.29135 
+L 826.279976 98.61055 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke: #1d4ed8; stroke-width: 1.5; stroke-linecap: square"/>
+    <defs>
+     <path id="precision_comparison-m1689db1f64" d="M 0 3 
+C 0.795609 3 1.55874 2.683901 2.12132 2.12132 
+C 2.683901 1.55874 3 0.795609 3 0 
+C 3 -0.795609 2.683901 -1.55874 2.12132 -2.12132 
+C 1.55874 -2.683901 0.795609 -3 0 -3 
+C -0.795609 -3 -1.55874 -2.683901 -2.12132 -2.12132 
+C -2.683901 -1.55874 -3 -0.795609 -3 0 
+C -3 0.795609 -2.683901 1.55874 -2.12132 2.12132 
+C -1.55874 2.683901 -0.795609 3 0 3 
+z
+" style="stroke: #1d4ed8"/>
+    </defs>
+    <g clip-path="url(#precision_comparison-pbbaf69fff0)">
+     <use xlink:href="#precision_comparison-m1689db1f64" x="470.504501" y="117.22775" style="fill: #1d4ed8; stroke: #1d4ed8"/>
+     <use xlink:href="#precision_comparison-m1689db1f64" x="603.920304" y="93.29135" style="fill: #1d4ed8; stroke: #1d4ed8"/>
+     <use xlink:href="#precision_comparison-m1689db1f64" x="826.279976" y="98.61055" style="fill: #1d4ed8; stroke: #1d4ed8"/>
+    </g>
+   </g>
+   <g id="precision_comparison-line2d_32">
+    <path d="M 452.715727 186.119969 
+L 844.06875 186.119969 
+" clip-path="url(#precision_comparison-pbbaf69fff0)" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #475569"/>
+   </g>
+   <g id="precision_comparison-patch_9">
+    <path d="M 452.715727 290.10175 
+L 452.715727 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="precision_comparison-patch_10">
+    <path d="M 452.715727 290.10175 
+L 844.06875 290.10175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="precision_comparison-text_26">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="648.392238" y="18.14175" transform="rotate(-0 648.392238 18.14175)">The review budget changes the result</text>
+   </g>
+   <g id="precision_comparison-legend_1">
+    <g id="precision_comparison-patch_11">
+     <path d="M 459.015727 97.393313 
+L 578.771977 97.393313 
+Q 580.571977 97.393313 580.571977 95.593313 
+L 580.571977 30.44175 
+Q 580.571977 28.64175 578.771977 28.64175 
+L 459.015727 28.64175 
+Q 457.215727 28.64175 457.215727 30.44175 
+L 457.215727 95.593313 
+Q 457.215727 97.393313 459.015727 97.393313 
+z
+" style="fill: #ffffff; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
+    </g>
+    <g id="precision_comparison-line2d_33">
+     <path d="M 460.815727 35.930344 
+L 469.815727 35.930344 
+L 478.815727 35.930344 
+" style="fill: none; stroke: #64748b; stroke-width: 1.5; stroke-linecap: square"/>
+     <g>
+      <use xlink:href="#precision_comparison-m6b8fc5331e" x="469.815727" y="35.930344" style="fill: #64748b; stroke: #64748b"/>
+     </g>
+    </g>
+    <g id="precision_comparison-text_27">
+     <text style="font: 9px 'DejaVu Sans'; text-anchor: start" x="486.015727" y="39.080344" transform="rotate(-0 486.015727 39.080344)">baseline rules</text>
+    </g>
+    <g id="precision_comparison-line2d_34">
+     <path d="M 460.815727 49.140656 
+L 469.815727 49.140656 
+L 478.815727 49.140656 
+" style="fill: none; stroke: #b45309; stroke-width: 1.5; stroke-linecap: square"/>
+     <g>
+      <use xlink:href="#precision_comparison-ma9416407e0" x="469.815727" y="49.140656" style="fill: #b45309; stroke: #b45309"/>
+     </g>
+    </g>
+    <g id="precision_comparison-text_28">
+     <text style="font: 9px 'DejaVu Sans'; text-anchor: start" x="486.015727" y="52.290656" transform="rotate(-0 486.015727 52.290656)">logistic regression</text>
+    </g>
+    <g id="precision_comparison-line2d_35">
+     <path d="M 460.815727 62.350969 
+L 469.815727 62.350969 
+L 478.815727 62.350969 
+" style="fill: none; stroke: #087f8c; stroke-width: 1.5; stroke-linecap: square"/>
+     <g>
+      <use xlink:href="#precision_comparison-m308ac8ba1a" x="469.815727" y="62.350969" style="fill: #087f8c; stroke: #087f8c"/>
+     </g>
+    </g>
+    <g id="precision_comparison-text_29">
+     <text style="font: 9px 'DejaVu Sans'; text-anchor: start" x="486.015727" y="65.500969" transform="rotate(-0 486.015727 65.500969)">decision tree</text>
+    </g>
+    <g id="precision_comparison-line2d_36">
+     <path d="M 460.815727 75.561281 
+L 469.815727 75.561281 
+L 478.815727 75.561281 
+" style="fill: none; stroke: #1d4ed8; stroke-width: 1.5; stroke-linecap: square"/>
+     <g>
+      <use xlink:href="#precision_comparison-m1689db1f64" x="469.815727" y="75.561281" style="fill: #1d4ed8; stroke: #1d4ed8"/>
+     </g>
+    </g>
+    <g id="precision_comparison-text_30">
+     <text style="font: 9px 'DejaVu Sans'; text-anchor: start" x="486.015727" y="78.711281" transform="rotate(-0 486.015727 78.711281)">random forest</text>
+    </g>
+    <g id="precision_comparison-line2d_37">
+     <path d="M 460.815727 88.771594 
+L 469.815727 88.771594 
+L 478.815727 88.771594 
+" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #475569"/>
+    </g>
+    <g id="precision_comparison-text_31">
+     <text style="font: 9px 'DejaVu Sans'; text-anchor: start" x="486.015727" y="91.921594" transform="rotate(-0 486.015727 91.921594)">random expectation</text>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="precision_comparison-pa22573a208">
+   <rect x="52.71875" y="24.14175" width="340.306977" height="265.96"/>
+  </clipPath>
+  <clipPath id="precision_comparison-pbbaf69fff0">
+   <rect x="452.715727" y="24.14175" width="391.353023" height="265.96"/>
+  </clipPath>
+ </defs>
+</svg>
+</figure></p>
+<p><em>Figure 3. All methods use the same 2,325 held-out pages. The random line is their 39.1% declining rate; connected points summarize K=20, 50, and 100 only.</em></p>
+<h3 id="starter-csv-interpretation-and-errors">Starter CSV: interpretation and errors</h3>
+<p>The model's top three importance entries are <code>days_with_impressions</code>, <code>log_impressions_90d</code>, <code>avg_position</code>. These describe the measurements the model used to separate pages in this sample. Their importance is an internal model summary, not evidence that editing one feature changes traffic. Correlated measurements and missing-data patterns can divide or inflate importance.</p>
+<p>At the ordinary 0.5 score cutoff, the selected model has 676 true positives, 887 true negatives, 529 false positives, and 233 false negatives. Recall is 74.4%; accuracy is 67.2%, compared with 60.9% majority-class accuracy. This threshold result is separate from choosing the top 50.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Impressions in 90 days</th>
+<th>Pages</th>
+<th>Declining rate</th>
+<th>False positives</th>
+<th>False negatives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Under 100</td>
+<td>1430</td>
+<td>0.300</td>
+<td>148</td>
+<td>225</td>
+</tr>
+<tr>
+<td>500-999</td>
+<td>141</td>
+<td>0.574</td>
+<td>60</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1,000+</td>
+<td>477</td>
+<td>0.503</td>
+<td>204</td>
+<td>6</td>
+</tr>
+<tr>
+<td>100-499</td>
+<td>277</td>
+<td>0.574</td>
+<td>117</td>
+<td>2</td>
+</tr>
+</tbody>
+</table></div>
+<p>Even at the top of the ranking, 13 of the first 50 picks do not have the declining label. Those are weaker matches to this proxy, not proof that the pages have no editorial value. The false negatives show why the list should not be the only way a team notices problems.</p>
+<p><figure><svg role="img" aria-label="errors and features" xmlns:xlink="http://www.w3.org/1999/xlink" width="851.474276pt" height="331.52925pt" viewBox="0 0 851.474276 331.52925" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="errors_and_features-figure_1">
+  <g id="errors_and_features-patch_1">
+   <path d="M 0 331.52925 
+L 851.474276 331.52925 
+L 851.474276 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="errors_and_features-axes_1">
+   <g id="errors_and_features-patch_2">
+    <path d="M 93.20375 274.70971 
+L 328.37967 274.70971 
+L 328.37967 39.53379 
+L 93.20375 39.53379 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g clip-path="url(#errors_and_features-p4531e618a1)">
+    <image xlink:href="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAAUcAAAFHCAYAAAAySY5rAAAERElEQVR4nO3WoRHCQABFwQRFORRARwgkLaQrykIgggoInjgFEbvqZs7cnHjz58dzXSfYgfNy//cT4O3wOQKwEUeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCOAOAKMsRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4A4ggwxnIECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCiCPAGMsRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIII4AYyxHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQ5uPpstYF/Nptufp0dsNyBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIEMQRIIgjQBBHgCCOAEEcAYI4AgRxBAjiCBDEESCII0AQR4AgjgBBHAGCOAIEcQQI4ggQxBEgiCNAEEeAII4AQRwBgjgCBHEECOIIMH17AXHICxBfOZ6pAAAAAElFTkSuQmCC" id="errors_and_features-image1a6b46e5f6" transform="scale(1 -1) translate(0 -235.44)" x="93.20375" y="-39.26971" width="235.44" height="235.44"/>
+   </g>
+   <g id="errors_and_features-matplotlib.axis_1">
+    <g id="errors_and_features-xtick_1">
+     <g id="errors_and_features-line2d_1">
+      <defs>
+       <path id="errors_and_features-m4748fc714f" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="151.99773" y="274.70971" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_1">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="151.99773" y="290.827835" transform="rotate(-0 151.99773 290.827835)">No decline</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_2">
+     <g id="errors_and_features-line2d_2">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="269.58569" y="274.70971" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_2">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="269.58569" y="290.827835" transform="rotate(-0 269.58569 290.827835)">Decline</text>
+     </g>
+    </g>
+    <g id="errors_and_features-text_3">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="210.79171" y="306.441585" transform="rotate(-0 210.79171 306.441585)">Predicted at score 0.5</text>
+    </g>
+   </g>
+   <g id="errors_and_features-matplotlib.axis_2">
+    <g id="errors_and_features-ytick_1">
+     <g id="errors_and_features-line2d_3">
+      <defs>
+       <path id="errors_and_features-m33cc8c8e7c" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="93.20375" y="98.32777" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_4">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="86.20375" y="102.886832" transform="rotate(-0 86.20375 102.886832)">No decline</text>
+     </g>
+    </g>
+    <g id="errors_and_features-ytick_2">
+     <g id="errors_and_features-line2d_4">
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="93.20375" y="215.91573" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_5">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="86.20375" y="220.474793" transform="rotate(-0 86.20375 220.474793)">Decline</text>
+     </g>
+    </g>
+    <g id="errors_and_features-text_6">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="16.318125" y="157.12175" transform="rotate(-90 16.318125 157.12175)">Observed label</text>
+    </g>
+   </g>
+   <g id="errors_and_features-patch_3">
+    <path d="M 93.20375 274.70971 
+L 93.20375 39.53379 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="errors_and_features-patch_4">
+    <path d="M 93.20375 274.70971 
+L 328.37967 274.70971 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="errors_and_features-text_7">
+    <text style="fill: #ffffff; font: 18px 'DejaVu Sans'; text-anchor: middle" x="151.99773" y="103.294645" transform="rotate(-0 151.99773 103.294645)">887</text>
+   </g>
+   <g id="errors_and_features-text_8">
+    <text style="fill: #0f172a; font: 18px 'DejaVu Sans'; text-anchor: middle" x="269.58569" y="103.294645" transform="rotate(-0 269.58569 103.294645)">529</text>
+   </g>
+   <g id="errors_and_features-text_9">
+    <text style="fill: #0f172a; font: 18px 'DejaVu Sans'; text-anchor: middle" x="151.99773" y="220.882605" transform="rotate(-0 151.99773 220.882605)">233</text>
+   </g>
+   <g id="errors_and_features-text_10">
+    <text style="fill: #ffffff; font: 18px 'DejaVu Sans'; text-anchor: middle" x="269.58569" y="220.882605" transform="rotate(-0 269.58569 220.882605)">676</text>
+   </g>
+   <g id="errors_and_features-text_11">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="210.79171" y="33.53379" transform="rotate(-0 210.79171 33.53379)">Held-out errors</text>
+   </g>
+  </g>
+  <g id="errors_and_features-axes_2">
+   <g id="errors_and_features-patch_5">
+    <path d="M 481.26967 290.10175 
+L 840.95049 290.10175 
+L 840.95049 24.14175 
+L 481.26967 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="errors_and_features-patch_6">
+    <path d="M 481.26967 278.012659 
+L 579.443247 278.012659 
+L 579.443247 237.715689 
+L 481.26967 237.715689 
+z
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: #087f8c"/>
+   </g>
+   <g id="errors_and_features-patch_7">
+    <path d="M 481.26967 227.641447 
+L 714.920227 227.641447 
+L 714.920227 187.344477 
+L 481.26967 187.344477 
+z
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: #087f8c"/>
+   </g>
+   <g id="errors_and_features-patch_8">
+    <path d="M 481.26967 177.270235 
+L 758.465106 177.270235 
+L 758.465106 136.973265 
+L 481.26967 136.973265 
+z
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: #087f8c"/>
+   </g>
+   <g id="errors_and_features-patch_9">
+    <path d="M 481.26967 126.899023 
+L 809.674632 126.899023 
+L 809.674632 86.602053 
+L 481.26967 86.602053 
+z
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: #087f8c"/>
+   </g>
+   <g id="errors_and_features-patch_10">
+    <path d="M 481.26967 76.527811 
+L 823.822832 76.527811 
+L 823.822832 36.230841 
+L 481.26967 36.230841 
+z
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: #087f8c"/>
+   </g>
+   <g id="errors_and_features-matplotlib.axis_3">
+    <g id="errors_and_features-xtick_3">
+     <g id="errors_and_features-line2d_5">
+      <path d="M 481.26967 290.10175 
+L 481.26967 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_6">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="481.26967" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_12">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="481.26967" y="306.219875" transform="rotate(-0 481.26967 306.219875)">0</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_4">
+     <g id="errors_and_features-line2d_7">
+      <path d="M 532.036757 290.10175 
+L 532.036757 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_8">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="532.036757" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_13">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="532.036757" y="306.219875" transform="rotate(-0 532.036757 306.219875)">2</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_5">
+     <g id="errors_and_features-line2d_9">
+      <path d="M 582.803844 290.10175 
+L 582.803844 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_10">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="582.803844" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_14">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="582.803844" y="306.219875" transform="rotate(-0 582.803844 306.219875)">4</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_6">
+     <g id="errors_and_features-line2d_11">
+      <path d="M 633.57093 290.10175 
+L 633.57093 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_12">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="633.57093" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_15">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="633.57093" y="306.219875" transform="rotate(-0 633.57093 306.219875)">6</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_7">
+     <g id="errors_and_features-line2d_13">
+      <path d="M 684.338017 290.10175 
+L 684.338017 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_14">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="684.338017" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_16">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="684.338017" y="306.219875" transform="rotate(-0 684.338017 306.219875)">8</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_8">
+     <g id="errors_and_features-line2d_15">
+      <path d="M 735.105103 290.10175 
+L 735.105103 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_16">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="735.105103" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_17">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="735.105103" y="306.219875" transform="rotate(-0 735.105103 306.219875)">10</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_9">
+     <g id="errors_and_features-line2d_17">
+      <path d="M 785.87219 290.10175 
+L 785.87219 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_18">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="785.87219" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_18">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="785.87219" y="306.219875" transform="rotate(-0 785.87219 306.219875)">12</text>
+     </g>
+    </g>
+    <g id="errors_and_features-xtick_10">
+     <g id="errors_and_features-line2d_19">
+      <path d="M 836.639276 290.10175 
+L 836.639276 24.14175 
+" clip-path="url(#errors_and_features-pc17949ce3a)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="errors_and_features-line2d_20">
+      <g>
+       <use xlink:href="#errors_and_features-m4748fc714f" x="836.639276" y="290.10175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_19">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="836.639276" y="306.219875" transform="rotate(-0 836.639276 306.219875)">14</text>
+     </g>
+    </g>
+    <g id="errors_and_features-text_20">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="661.11008" y="321.833625" transform="rotate(-0 661.11008 321.833625)">Share of model importance (%)</text>
+    </g>
+   </g>
+   <g id="errors_and_features-matplotlib.axis_4">
+    <g id="errors_and_features-ytick_3">
+     <g id="errors_and_features-line2d_21">
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="481.26967" y="257.864174" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_21">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="474.26967" y="262.423237" transform="rotate(-0 474.26967 262.423237)">char count</text>
+     </g>
+    </g>
+    <g id="errors_and_features-ytick_4">
+     <g id="errors_and_features-line2d_22">
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="481.26967" y="207.492962" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_22">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="474.26967" y="212.052025" transform="rotate(-0 474.26967 212.052025)">content age days</text>
+     </g>
+    </g>
+    <g id="errors_and_features-ytick_5">
+     <g id="errors_and_features-line2d_23">
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="481.26967" y="157.12175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_23">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="474.26967" y="161.680813" transform="rotate(-0 474.26967 161.680813)">avg position</text>
+     </g>
+    </g>
+    <g id="errors_and_features-ytick_6">
+     <g id="errors_and_features-line2d_24">
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="481.26967" y="106.750538" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_24">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="474.26967" y="111.3096" transform="rotate(-0 474.26967 111.3096)">log impressions (90d)</text>
+     </g>
+    </g>
+    <g id="errors_and_features-ytick_7">
+     <g id="errors_and_features-line2d_25">
+      <g>
+       <use xlink:href="#errors_and_features-m33cc8c8e7c" x="481.26967" y="56.379326" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="errors_and_features-text_25">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="474.26967" y="60.938388" transform="rotate(-0 474.26967 60.938388)">days with impressions</text>
+     </g>
+    </g>
+   </g>
+   <g id="errors_and_features-patch_11">
+    <path d="M 481.26967 290.10175 
+L 481.26967 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="errors_and_features-patch_12">
+    <path d="M 481.26967 290.10175 
+L 840.95049 290.10175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="errors_and_features-text_26">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="661.11008" y="18.14175" transform="rotate(-0 661.11008 18.14175)">What the training fit used most</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="errors_and_features-p4531e618a1">
+   <rect x="93.20375" y="39.53379" width="235.17592" height="235.17592"/>
+  </clipPath>
+  <clipPath id="errors_and_features-pc17949ce3a">
+   <rect x="481.26967" y="24.14175" width="359.680819" height="265.96"/>
+  </clipPath>
+ </defs>
+</svg>
+</figure></p>
+<p><em>Figure 4. Errors use held-out predictions. Importance comes from the same training fit; neither panel measures the impact of a refresh.</em></p>
+<h3 id="warehouse-selection-and-final-check">Warehouse: selection and final check</h3>
+<p>I chose <strong>logistic regression</strong> as the strongest learned candidate using validation Precision@50, with average precision and ROC AUC breaking ties. Across rules and learned models, validation preferred <strong>momentum rule</strong>. This choice was recorded before June outcomes were read.</p>
+<p><strong>April-to-May validation.</strong> The declining rate is 56.7% across 1,373 pages.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>P@20</th>
+<th>P@50</th>
+<th>P@100</th>
+<th>ROC AUC</th>
+<th>Average precision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>momentum rule</td>
+<td>0.950</td>
+<td>0.880</td>
+<td>0.920</td>
+<td>0.704</td>
+<td>0.756</td>
+</tr>
+<tr>
+<td>volume rule</td>
+<td>0.350</td>
+<td>0.340</td>
+<td>0.430</td>
+<td>0.471</td>
+<td>0.530</td>
+</tr>
+<tr>
+<td>logistic regression</td>
+<td>0.850</td>
+<td>0.840</td>
+<td>0.850</td>
+<td>0.769</td>
+<td>0.786</td>
+</tr>
+<tr>
+<td>decision tree</td>
+<td>0.456</td>
+<td>0.456</td>
+<td>0.590</td>
+<td>0.685</td>
+<td>0.673</td>
+</tr>
+<tr>
+<td>random forest</td>
+<td>0.850</td>
+<td>0.840</td>
+<td>0.840</td>
+<td>0.743</td>
+<td>0.768</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>May-to-June final check.</strong> The declining rate is <strong>31.1% across 5,696 pages</strong>. The selected model has <strong>80.0% Precision@50</strong>, compared with <strong>96.0% for the momentum rule</strong> and <strong>26.0% for the volume rule</strong>.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>P@20</th>
+<th>P@50</th>
+<th>P@100</th>
+<th>ROC AUC</th>
+<th>Average precision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>momentum rule</td>
+<td>1.000</td>
+<td>0.960</td>
+<td>0.940</td>
+<td>0.700</td>
+<td>0.556</td>
+</tr>
+<tr>
+<td>volume rule</td>
+<td>0.250</td>
+<td>0.260</td>
+<td>0.280</td>
+<td>0.462</td>
+<td>0.290</td>
+</tr>
+<tr>
+<td>logistic regression</td>
+<td>0.850</td>
+<td>0.800</td>
+<td>0.800</td>
+<td>0.680</td>
+<td>0.505</td>
+</tr>
+</tbody>
+</table></div>
+<p>The model-minus-momentum difference is -16.0 percentage points at 50 review slots. Random ranking would average 15.5 declining pages per 50 picks. These results measure later decline, not the effect of an editorial change.</p>
+<p>Ties are handled explicitly in this study: Precision@K is the expected result when ties at the cutoff are ordered randomly. For the selected model at K=50, the possible range from tied ordering is 80.0% to 80.0%. The receipt records these ranges for every method. This avoids giving a threshold rule or tree credit for an arbitrary file order.</p>
+<p>As a simple robustness check, I remove one held-out client at a time without refitting. The model-minus-momentum Precision@50 difference ranges from -16.0 to +0.0 percentage points across 6 such checks. This is descriptive sensitivity, not a confidence interval or a significance test.</p>
+<p><figure><svg role="img" aria-label="both datasets" xmlns:xlink="http://www.w3.org/1999/xlink" width="851.26875pt" height="332.8755pt" viewBox="0 0 851.26875 332.8755" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="both_datasets-figure_1">
+  <g id="both_datasets-patch_1">
+   <path d="M 0 332.8755 
+L 851.26875 332.8755 
+L 851.26875 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="both_datasets-axes_1">
+   <g id="both_datasets-patch_2">
+    <path d="M 52.71875 307.06175 
+L 418.54875 307.06175 
+L 418.54875 24.14175 
+L 52.71875 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="both_datasets-patch_3">
+    <path d="M 69.347386 307.06175 
+L 146.094939 307.06175 
+L 146.094939 245.33375 
+L 69.347386 245.33375 
+z
+" clip-path="url(#both_datasets-p327a0db309)" style="fill: #64748b"/>
+   </g>
+   <g id="both_datasets-patch_4">
+    <path d="M 197.259974 307.06175 
+L 274.007526 307.06175 
+L 274.007526 206.504847 
+L 197.259974 206.504847 
+z
+" clip-path="url(#both_datasets-p327a0db309)" style="fill: #b45309"/>
+   </g>
+   <g id="both_datasets-patch_5">
+    <path d="M 325.172561 307.06175 
+L 401.920114 307.06175 
+L 401.920114 116.73375 
+L 325.172561 116.73375 
+z
+" clip-path="url(#both_datasets-p327a0db309)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="both_datasets-matplotlib.axis_1">
+    <g id="both_datasets-xtick_1">
+     <g id="both_datasets-line2d_1">
+      <defs>
+       <path id="both_datasets-ma02c1e675b" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="107.721163" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_1">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="107.721163" y="323.179875" transform="rotate(-0 107.721163 323.179875)">Repo rule</text>
+     </g>
+    </g>
+    <g id="both_datasets-xtick_2">
+     <g id="both_datasets-line2d_2">
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="235.63375" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_2">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="235.63375" y="323.179875" transform="rotate(-0 235.63375 323.179875)">Random</text>
+     </g>
+    </g>
+    <g id="both_datasets-xtick_3">
+     <g id="both_datasets-line2d_3">
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="363.546337" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_3">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="363.546337" y="323.179875" transform="rotate(-0 363.546337 323.179875)">Model</text>
+     </g>
+    </g>
+   </g>
+   <g id="both_datasets-matplotlib.axis_2">
+    <g id="both_datasets-ytick_1">
+     <g id="both_datasets-line2d_4">
+      <defs>
+       <path id="both_datasets-m0b4aeff7a7" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="52.71875" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_4">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="311.620812" transform="rotate(-0 45.71875 311.620812)">0</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_2">
+     <g id="both_datasets-line2d_5">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="52.71875" y="255.62175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_5">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="260.180812" transform="rotate(-0 45.71875 260.180812)">20</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_3">
+     <g id="both_datasets-line2d_6">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="52.71875" y="204.18175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_6">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="208.740812" transform="rotate(-0 45.71875 208.740812)">40</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_4">
+     <g id="both_datasets-line2d_7">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="52.71875" y="152.74175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_7">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="157.300812" transform="rotate(-0 45.71875 157.300812)">60</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_5">
+     <g id="both_datasets-line2d_8">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="52.71875" y="101.30175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_8">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="105.860812" transform="rotate(-0 45.71875 105.860812)">80</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_6">
+     <g id="both_datasets-line2d_9">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="52.71875" y="49.86175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_9">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="45.71875" y="54.420812" transform="rotate(-0 45.71875 54.420812)">100</text>
+     </g>
+    </g>
+    <g id="both_datasets-text_10">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="16.318125" y="165.60175" transform="rotate(-90 16.318125 165.60175)">Precision@50 (%)</text>
+    </g>
+   </g>
+   <g id="both_datasets-patch_6">
+    <path d="M 52.71875 307.06175 
+L 52.71875 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="both_datasets-patch_7">
+    <path d="M 52.71875 307.06175 
+L 418.54875 307.06175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="both_datasets-text_11">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="107.721163" y="240.96135" transform="rotate(-0 107.721163 240.96135)">24.0%</text>
+   </g>
+   <g id="both_datasets-text_12">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="235.63375" y="202.132447" transform="rotate(-0 235.63375 202.132447)">39.1%</text>
+   </g>
+   <g id="both_datasets-text_13">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="363.546337" y="112.36135" transform="rotate(-0 363.546337 112.36135)">74.0%</text>
+   </g>
+   <g id="both_datasets-text_14">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="235.63375" y="18.14175" transform="rotate(-0 235.63375 18.14175)">Starter CSV: observed decline</text>
+   </g>
+  </g>
+  <g id="both_datasets-axes_2">
+   <g id="both_datasets-patch_8">
+    <path d="M 478.23875 307.06175 
+L 844.06875 307.06175 
+L 844.06875 24.14175 
+L 478.23875 24.14175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="both_datasets-patch_9">
+    <path d="M 494.867386 307.06175 
+L 550.296174 307.06175 
+L 550.296174 60.14975 
+L 494.867386 60.14975 
+z
+" clip-path="url(#both_datasets-pa395f68272)" style="fill: #64748b"/>
+   </g>
+   <g id="both_datasets-patch_10">
+    <path d="M 587.248699 307.06175 
+L 642.677487 307.06175 
+L 642.677487 240.18975 
+L 587.248699 240.18975 
+z
+" clip-path="url(#both_datasets-pa395f68272)" style="fill: #087f8c"/>
+   </g>
+   <g id="both_datasets-patch_11">
+    <path d="M 679.630013 307.06175 
+L 735.058801 307.06175 
+L 735.058801 227.138295 
+L 679.630013 227.138295 
+z
+" clip-path="url(#both_datasets-pa395f68272)" style="fill: #b45309"/>
+   </g>
+   <g id="both_datasets-patch_12">
+    <path d="M 772.011326 307.06175 
+L 827.440114 307.06175 
+L 827.440114 101.30175 
+L 772.011326 101.30175 
+z
+" clip-path="url(#both_datasets-pa395f68272)" style="fill: #1d4ed8"/>
+   </g>
+   <g id="both_datasets-matplotlib.axis_3">
+    <g id="both_datasets-xtick_4">
+     <g id="both_datasets-line2d_10">
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="522.58178" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_15">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="522.58178" y="323.179875" transform="rotate(-0 522.58178 323.179875)">Momentum</text>
+     </g>
+    </g>
+    <g id="both_datasets-xtick_5">
+     <g id="both_datasets-line2d_11">
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="614.963093" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_16">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="614.963093" y="323.179875" transform="rotate(-0 614.963093 323.179875)">Volume</text>
+     </g>
+    </g>
+    <g id="both_datasets-xtick_6">
+     <g id="both_datasets-line2d_12">
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="707.344407" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_17">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="707.344407" y="323.179875" transform="rotate(-0 707.344407 323.179875)">Random</text>
+     </g>
+    </g>
+    <g id="both_datasets-xtick_7">
+     <g id="both_datasets-line2d_13">
+      <g>
+       <use xlink:href="#both_datasets-ma02c1e675b" x="799.72572" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_18">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="799.72572" y="323.179875" transform="rotate(-0 799.72572 323.179875)">Model</text>
+     </g>
+    </g>
+   </g>
+   <g id="both_datasets-matplotlib.axis_4">
+    <g id="both_datasets-ytick_7">
+     <g id="both_datasets-line2d_14">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="478.23875" y="307.06175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_19">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="471.23875" y="311.620812" transform="rotate(-0 471.23875 311.620812)">0</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_8">
+     <g id="both_datasets-line2d_15">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="478.23875" y="255.62175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_20">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="471.23875" y="260.180812" transform="rotate(-0 471.23875 260.180812)">20</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_9">
+     <g id="both_datasets-line2d_16">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="478.23875" y="204.18175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_21">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="471.23875" y="208.740812" transform="rotate(-0 471.23875 208.740812)">40</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_10">
+     <g id="both_datasets-line2d_17">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="478.23875" y="152.74175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_22">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="471.23875" y="157.300812" transform="rotate(-0 471.23875 157.300812)">60</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_11">
+     <g id="both_datasets-line2d_18">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="478.23875" y="101.30175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_23">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="471.23875" y="105.860812" transform="rotate(-0 471.23875 105.860812)">80</text>
+     </g>
+    </g>
+    <g id="both_datasets-ytick_12">
+     <g id="both_datasets-line2d_19">
+      <g>
+       <use xlink:href="#both_datasets-m0b4aeff7a7" x="478.23875" y="49.86175" style="stroke: #000000; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="both_datasets-text_24">
+      <text style="font: 12px 'DejaVu Sans'; text-anchor: end" x="471.23875" y="54.420812" transform="rotate(-0 471.23875 54.420812)">100</text>
+     </g>
+    </g>
+    <g id="both_datasets-text_25">
+     <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="441.838125" y="165.60175" transform="rotate(-90 441.838125 165.60175)">Precision@50 (%)</text>
+    </g>
+   </g>
+   <g id="both_datasets-patch_13">
+    <path d="M 478.23875 307.06175 
+L 478.23875 24.14175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="both_datasets-patch_14">
+    <path d="M 478.23875 307.06175 
+L 844.06875 307.06175 
+" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="both_datasets-text_26">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="522.58178" y="55.77735" transform="rotate(-0 522.58178 55.77735)">96.0%</text>
+   </g>
+   <g id="both_datasets-text_27">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="614.963093" y="235.81735" transform="rotate(-0 614.963093 235.81735)">26.0%</text>
+   </g>
+   <g id="both_datasets-text_28">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="707.344407" y="222.765895" transform="rotate(-0 707.344407 222.765895)">31.1%</text>
+   </g>
+   <g id="both_datasets-text_29">
+    <text style="font: 700 11px 'DejaVu Sans'; text-anchor: middle" x="799.72572" y="96.92935" transform="rotate(-0 799.72572 96.92935)">80.0%</text>
+   </g>
+   <g id="both_datasets-text_30">
+    <text style="font: 700 14.4px 'DejaVu Sans'; text-anchor: middle" x="661.15375" y="18.14175" transform="rotate(-0 661.15375 18.14175)">Warehouse: next-month decline</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="both_datasets-p327a0db309">
+   <rect x="52.71875" y="24.14175" width="365.83" height="282.92"/>
+  </clipPath>
+  <clipPath id="both_datasets-pa395f68272">
+   <rect x="478.23875" y="24.14175" width="365.83" height="282.92"/>
+  </clipPath>
+ </defs>
+</svg>
+</figure></p>
+<p><em>Figure 6. Each model is compared with baselines on its own evaluation set. The two panels use different populations, labels, features, and validation designs; their percentages are not a direct contest between datasets.</em></p>
+<h3 id="warehouse-interpretation-and-errors">Warehouse: interpretation and errors</h3>
+<p>At score 0.5, the selected model makes 539 false-positive calls and misses 1,155 declining pages. Its accuracy is 70.3%; assigning every page to the majority class would give 68.9%. The other two counts are 615 true positives and 3,387 true negatives. The 0.5 cutoff is separate from a top-50 review budget.</p>
+<p>The leading model inputs are <code>half_month_change</code>, <code>daily_impression_cv</code>, <code>log_impressions</code>. Their recorded interpretation is absolute standardized coefficients, not causal effects. These are descriptions of the fit, not proof that changing a feature will recover traffic.</p>
+<h3 id="what-the-two-datasets-support">What the two datasets support</h3>
+<p>The CSV study reproduces the supplied benchmark: a model can match the current decline label more often than the four-part reference rule at the top of that list. Its overlapping windows and reused development holdout limit the claim.</p>
+<p>The warehouse study tests a separate, forward-looking question. It fits preprocessing on earlier training rows, holds out whole clients, and evaluates a later outcome after recording model selection. On its final set, the model reaches 80.0% Precision@50, the momentum rule 96.0%, and the volume rule 26.0%, against a 31.1% base rate. The model wins the CSV comparison, but the simple momentum rule wins the warehouse forecast. That is the main practical finding. A different result from the CSV is not a contradiction: the question and candidate population changed.</p>
+<h2 id="limitations-honest-framing">Limitations &amp; honest framing</h2>
+<h3 id="limitations-and-next-checks">Limitations and next checks</h3>
+<p><strong>The CSV study is a starter-snapshot benchmark.</strong> It supports a comparison on the supplied 30,000 pages, not a result on the full warehouse or on future traffic. The actual declining label is already available at the snapshot; the model's value here is as a ranking experiment, not as a way to discover otherwise unknown decline.</p>
+<p><strong>The outcome is a proxy.</strong> Decline does not establish a need for a rewrite or likely recovery. Seasonality, tracking changes, competition, and consolidation can look similar in these aggregates. Pages with no exposure or age below 90 days are outside the sample.</p>
+<p><strong>The CSV development holdout has been used to compare models.</strong> There is no untouched final test or measured interval across repeated client splits. Only six clients are held out, their sizes differ, and the positive rate differs from the full sample. Results should not be generalized to every client.</p>
+<p><strong>The CSV preprocessing has known weaknesses.</strong> The reproduced benchmark uses full-sample percentiles and category vocabulary, zero-filled numeric gaps, and same-window traffic inputs. These choices are disclosed rather than described as a complete leakage pass. The identifier and direct-target checks cover only those specific risks.</p>
+<p><strong>The action guidance has not been tested in production.</strong> Scores are uncalibrated and evidence labels are heuristic. The saved March warehouse outputs need a clean rerun after correcting window overlap and equalizing exposure periods. The new warehouse experiment corrects those timing problems for a new monthly forecast; it does not validate the old March scores. The warehouse has separate client groups and a later final window, but it still assumes stable creation dates, uses one final period, and excludes insufficiently observed outcomes. Publishing and causal traffic recovery have not been demonstrated.</p>
+<h3 id="what-the-two-datasets-cannot-establish">What the two datasets cannot establish</h3>
+<p>Neither study measures the benefit of a refresh. The warehouse result also depends on reliable creation dates, March client eligibility, and sufficient tracking in the outcome month. Missing later outcomes are excluded, so this is not an evaluation of every page that a real editor would see. More client splits and later time windows would help establish whether the result holds.</p>
+<h2 id="ranked-recommendations">Ranked recommendations</h2>
+<h3 id="starter-csv-ranked-recommendations">Starter CSV: ranked recommendations</h3>
+<p>I would start with the model ranking, then use the evidence to choose the review. The score orders pages by resemblance to observed decline; it is not a calibrated probability that a rewrite will work. Reason codes are separate editorial checks, not explanations of individual model decisions.</p>
+<ol>
+<li><strong>Check the measurement.</strong> Confirm tracking and enough impressions before treating a dip as a content problem.</li>
+<li><strong>Review the first 20 candidates.</strong> Check the traffic history, related pages, seasonality, page accuracy, and search intent. For a visible page with low CTR, inspect the search snippet and intent match first. Low CTR alone does not establish that the title is wrong.</li>
+<li><strong>Make the smallest justified change.</strong> Record why the editor accepts or rejects the suggestion. Age or word count alone is not a reason to rewrite, expand, merge, or prune.</li>
+<li><strong>Measure what happens next.</strong> Record review time and later outcomes. A comparison group or controlled test would be needed to estimate the effect of acting on the list.</li>
+</ol>
+<p>The first 20 held-out candidates below retain only rank, model score, broad volume bands, and review guidance. Evidence labels describe available context, not statistical confidence. No new row-level dataset is exported.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Model score</th>
+<th>Impressions band</th>
+<th>Review action</th>
+<th>Reason</th>
+<th>Evidence</th>
+<th>What could make it wrong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0.768</td>
+<td>500-999</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.763</td>
+<td>1,000+</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.763</td>
+<td>100-499</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0.754</td>
+<td>500-999</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0.753</td>
+<td>100-499</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0.750</td>
+<td>500-999</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0.742</td>
+<td>1,000+</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0.740</td>
+<td>1,000+</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>9</td>
+<td>0.739</td>
+<td>500-999</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0.739</td>
+<td>100-499</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>11</td>
+<td>0.737</td>
+<td>1,000+</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>12</td>
+<td>0.735</td>
+<td>1,000+</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>13</td>
+<td>0.735</td>
+<td>1,000+</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>14</td>
+<td>0.734</td>
+<td>1,000+</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>15</td>
+<td>0.733</td>
+<td>100-499</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>16</td>
+<td>0.732</td>
+<td>1,000+</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>17</td>
+<td>0.731</td>
+<td>500-999</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+<tr>
+<td>18</td>
+<td>0.731</td>
+<td>500-999</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>19</td>
+<td>0.730</td>
+<td>1,000+</td>
+<td>Review snippet and intent</td>
+<td>visible_low_ctr</td>
+<td>More context</td>
+<td>Search layout or intent may explain low CTR</td>
+</tr>
+<tr>
+<td>20</td>
+<td>0.729</td>
+<td>100-499</td>
+<td>Inspect the trend and page</td>
+<td>model_review_candidate</td>
+<td>Limited</td>
+<td>Seasonality or related pages may explain the drop</td>
+</tr>
+</tbody>
+</table></div>
+<p>The reference pipeline also exports a full-data queue that blends 70% model score with 30% normalized baseline. That is a different ranking, fitted after evaluation. Its performance cannot be assumed to equal the model-only figures in this paper, so I do not use it as my evaluated output.</p>
+<h3 id="warehouse-review-guidance">Warehouse: review guidance</h3>
+<p>For this warehouse task, I would start with the <strong>momentum rule</strong>. It led in validation and found 48 declining pages in the final top 50, compared with 40 for logistic regression. The rule is easier to explain and did better on this test; the learned model has not earned the extra work here. Check tracking and seasonality, compare related pages, and inspect the page before deciding whether a change is useful. The model's score is uncalibrated, and the review reasons are separate checks rather than causal explanations.</p>
+<p>Below are the first five candidates in the <strong>validation-preferred rule's</strong> final-window demonstration. The <a href="outputs/warehouse_policy_review.json">policy review receipt</a> contains all 20 with broad volume bands, suggested reviews, and reasons they could be wrong. The rule score is a ranking value, not a probability. These are generated review suggestions, not claims that I manually inspected the real pages.</p>
+<div class="table-wrap" tabindex="0"><table>
+<thead>
+<tr>
+<th>rank</th>
+<th>rule_score</th>
+<th>volume_band</th>
+<th>action</th>
+<th>reason</th>
+<th>what_could_be_wrong</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>10.153</td>
+<td>10,000+</td>
+<td>Review recent loss, snippet, and intent</td>
+<td>past_decline_and_low_ctr</td>
+<td>Seasonality, tracking changes, or related-page gains</td>
+</tr>
+<tr>
+<td>2</td>
+<td>9.938</td>
+<td>10,000+</td>
+<td>Review recent loss, snippet, and intent</td>
+<td>past_decline_and_low_ctr</td>
+<td>Seasonality, tracking changes, or related-page gains</td>
+</tr>
+<tr>
+<td>3</td>
+<td>9.833</td>
+<td>10,000+</td>
+<td>Review recent loss, snippet, and intent</td>
+<td>past_decline_and_low_ctr</td>
+<td>Seasonality, tracking changes, or related-page gains</td>
+</tr>
+<tr>
+<td>4</td>
+<td>9.493</td>
+<td>10,000+</td>
+<td>Review recent loss, snippet, and intent</td>
+<td>past_decline_and_low_ctr</td>
+<td>Seasonality, tracking changes, or related-page gains</td>
+</tr>
+<tr>
+<td>5</td>
+<td>9.191</td>
+<td>10,000+</td>
+<td>Review recent loss, snippet, and intent</td>
+<td>past_decline_and_low_ctr</td>
+<td>Seasonality, tracking changes, or related-page gains</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="reproducibility">Reproducibility</h2>
+<h3 id="notebook-repository-and-rerun-instructions">Notebook, repository, and rerun instructions</h3>
+<p><a href="https://github.com/Ibrahim-1rfan/Flyrank-">Repository</a> | <a href="notebooks/capstone.ipynb">Capstone notebook</a> | <a href="outputs/capstone_metrics.json">Fresh metrics</a> | <a href="outputs/capstone_metrics_original.json">Original supplied metrics</a></p>
+<p>The experiment uses the bundled starter file and seed 42. The CSV portion needs no login. The first warehouse run needs a saved Hugging Face read login (<code>hf auth login</code>) and access to <code>FlyRank/internship-warehouse</code>; later runs reuse local caches. From a fresh clone, run:</p>
+<pre><code class="language-text">python -m pip install -r requirements.txt
+python -m pip install -r work/requirements-capstone.txt
+python work/scripts/run_capstone.py
+</code></pre>
+<p>Or open <code>work/notebooks/capstone.ipynb</code> in Jupyter and run all cells. The notebook builds the features and held-out frame, runs both experiments, computes every result, and writes this paper. Keep the full <code>work/</code> layout when sharing the HTML so its notebook and metrics links resolve. Charts and styles are embedded in the HTML itself, so the paper also opens offline as one file.</p>
+<p>This run uses: python 3.10.11, numpy 2.2.6, pandas 2.3.3, scikit-learn 1.7.2, matplotlib 3.8.4. Direct analysis and notebook dependencies are pinned in <code>work/requirements-capstone.txt</code>. The metrics include a SHA-256 fingerprint of the input, the notebook code, the imported reference helpers, and the paper builder. Top-K scores with ties can vary across stacks; the receipt records their possible boundary range.</p>
+<p>The delivered artifact is a local HTML paper. The internship also asks for a deployed page and its direct address in <code>submission/paper_url.txt</code>; a generated file alone does not establish publication.</p>
+<h3 id="warehouse-recorded-choices-and-cached-data">Warehouse: recorded choices and cached data</h3>
+<p><a href="outputs/warehouse_metrics.json">Warehouse metrics</a> | <a href="outputs/warehouse_selection_v2.json">Recorded model choice</a> | <a href="outputs/warehouse_selection_before_grain_fix.json">Original pre-June choice</a> | <a href="scripts/warehouse_capstone.py">Warehouse analysis code</a> | <a href="outputs/warehouse_inventory.json">Data inventory</a></p>
+<p>The first warehouse run requires a saved Hugging Face read login with access to the gated release. The code reads only the selected columns, aggregates them, and reuses fingerprint-checked local caches on later runs. Its pinned revision and implementation follow <a href="https://duckdb.org/docs/current/core_extensions/httpfs/hugging_face">DuckDB's documented Hugging Face support</a>. Source dimensions, cache fingerprints, filters, model settings, and aggregate checks are recorded alongside the results.</p>
+<h2 id="acknowledgments-data-credit">Acknowledgments &amp; data credit</h2>
+<p><a href="https://flyrank.ai">Built on the FlyRank ML Internship dataset</a>.</p>
+<p>I used the repository's data dictionary, starter scripts, and capstone template, alongside my earlier assignment notebooks. AI assistance helped review the code and simplify the writing; the reported results are computed by this notebook. The checks support the stated benchmark, while the remaining limits stay visible.</p></article></div>
+<footer>Local research paper | Charts and numbers generated from the capstone notebook | Built on the FlyRank ML Internship dataset</footer></body></html>

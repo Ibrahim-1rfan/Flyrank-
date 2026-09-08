@@ -1,0 +1,10 @@
+{
+  "question": "Which mature content items should be reviewed first for refresh?",
+  "dataset_rows": 30000,
+  "declining_rate": 0.5420666666666667,
+  "split_strategy": "client_holdout",
+  "best_model": "random_forest",
+  "best_model_precision_at_50": 0.74,
+  "baseline_precision_at_50": 0.24,
+  "seed": 42
+}

@@ -1,0 +1,35 @@
+{
+  "revision": "50cbf7c3909d07be4d1b5906b4d09e882e5acbf2",
+  "files": {
+    "clients_v1": {
+      "rows": 104,
+      "query_sha256": "184a701541ced7ff99b3c6218aaa18ecb40e8e2fea98279f9fcc4fc88aa67b29",
+      "sha256": "b92a84d1d300d22ca629c20bc350f4b86fea34bd97d353d0a2858770e0e4e5dd"
+    },
+    "content_v1": {
+      "rows": 519606,
+      "query_sha256": "3231963fe66678e0a5c580e0de0886040d555969a8aff550c5b7447d096f651f",
+      "sha256": "fe1c8617d3638fb407e4cb110b1f87484785a7043456f96780484f7ce8d9e1ee"
+    },
+    "month_2026_03_v1": {
+      "rows": 331437,
+      "query_sha256": "4e61135b41d53001b0d116555d87e26d34e11ef4d787a46fff9f00dd411259ca",
+      "sha256": "7d2644a6e2ba6ac1fc0468fccc32ff019de65226a496dc46312c2b09b7c48a33"
+    },
+    "month_2026_04_v1": {
+      "rows": 362172,
+      "query_sha256": "bbcc8135e5d2c1e0b07940d96cc4b7307f975690662f76cba2881fdb6807ad53",
+      "sha256": "8b58c8649e2c37530dbc43f7e8764f58dea48d0cf08606e893dd8360cdb50c05"
+    },
+    "month_2026_05_v1": {
+      "rows": 389153,
+      "query_sha256": "5393a0c1abdfcc2644b6d4e68fe6ce6c1379989e895b3f3aed7a3258c1ad2d4e",
+      "sha256": "4fa6b00f5f4022605bb7d5b6d44978803da549b35c0ce7dfab0ba8f70073b30f"
+    },
+    "month_2026_06_v1": {
+      "rows": 409205,
+      "query_sha256": "e8cd8ec446f9dc3cd48e04515bbc5a01ef3548d9095f99fa46a9c1e4c029ea38",
+      "sha256": "151f291470cc61c1257970e394e33ffa4a837de9bddf2b300978409088fd32cc"
+    }
+  }
+}

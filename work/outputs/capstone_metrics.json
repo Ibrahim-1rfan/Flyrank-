@@ -1,0 +1,327 @@
+{
+  "schema_version": 2,
+  "question": "Which mature pages should be reviewed first for refresh?",
+  "dataset_rows": 30000,
+  "declining_rate": 0.5420666666666667,
+  "split_strategy": "client_holdout",
+  "best_model": "random_forest",
+  "best_model_precision_at_50": 0.74,
+  "baseline_precision_at_50": 0.24,
+  "seed": 42,
+  "run_utc": "2026-09-08T16:47:44.641545+00:00",
+  "data": {
+    "source": "bundled starter CSV",
+    "raw_columns": 44,
+    "source_sha256": "99a2bdada7d15ce08114fc2ba5e32601e95ccb4e63c328ce35aadfc1e3114d75",
+    "calendar_window": "not recorded in starter CSV",
+    "row_exclusions": 0,
+    "missing_measurements": [
+      {
+        "Measurement": "Word count missing",
+        "Pages": 7699
+      },
+      {
+        "Measurement": "Search-volume estimate missing",
+        "Pages": 2468
+      },
+      {
+        "Measurement": "Position unavailable (zero)",
+        "Pages": 1205
+      }
+    ],
+    "high_impact_declining_pages": 8031
+  },
+  "split": {
+    "train_rows": 27675,
+    "test_rows": 2325,
+    "train_clients": 26,
+    "test_clients": 6,
+    "train_positive_rate": 0.5547606142728094,
+    "test_positive_rate": 0.3909677419354839,
+    "test_positive_rows": 909,
+    "majority_accuracy": 0.6090322580645161,
+    "role": "development holdout used to compare models",
+    "sealed_final_test": false
+  },
+  "features": {
+    "numeric": [
+      "search_volume",
+      "competition",
+      "cpc",
+      "word_count",
+      "char_count",
+      "log_impressions_90d",
+      "log_clicks_90d",
+      "log_sessions_90d",
+      "log_ai_sessions_90d",
+      "days_with_impressions",
+      "days_with_sessions",
+      "content_age_days",
+      "days_since_last_update",
+      "ctr",
+      "avg_position",
+      "engagement_rate",
+      "scroll_rate",
+      "ai_traffic_pct"
+    ],
+    "categorical": [
+      "competition_level",
+      "content_type",
+      "main_intent",
+      "age_tier",
+      "freshness_tier",
+      "word_count_tier",
+      "impression_tier",
+      "position_tier"
+    ],
+    "encoded_count": 52,
+    "encoded": [
+      "search_volume",
+      "competition",
+      "cpc",
+      "word_count",
+      "char_count",
+      "log_impressions_90d",
+      "log_clicks_90d",
+      "log_sessions_90d",
+      "log_ai_sessions_90d",
+      "days_with_impressions",
+      "days_with_sessions",
+      "content_age_days",
+      "days_since_last_update",
+      "ctr",
+      "avg_position",
+      "engagement_rate",
+      "scroll_rate",
+      "ai_traffic_pct",
+      "competition_level_HIGH",
+      "competition_level_LOW",
+      "competition_level_MEDIUM",
+      "competition_level_unknown",
+      "content_type_comparison article",
+      "content_type_feedly article",
+      "content_type_keyword article",
+      "main_intent_commercial",
+      "main_intent_informational",
+      "main_intent_navigational",
+      "main_intent_transactional",
+      "main_intent_unknown",
+      "age_tier_181-365",
+      "age_tier_31-90",
+      "age_tier_365+",
+      "age_tier_91-180",
+      "freshness_tier_0-30",
+      "freshness_tier_181+",
+      "freshness_tier_31-90",
+      "freshness_tier_91-180",
+      "word_count_tier_1000-2000",
+      "word_count_tier_2000-3500",
+      "word_count_tier_3500+",
+      "word_count_tier_<1000",
+      "word_count_tier_unknown",
+      "impression_tier_excellent",
+      "impression_tier_good",
+      "impression_tier_low",
+      "impression_tier_moderate",
+      "position_tier_deep",
+      "position_tier_page_1",
+      "position_tier_page_3_5",
+      "position_tier_striking",
+      "position_tier_top_3"
+    ]
+  },
+  "metrics": {
+    "baseline_rules": {
+      "accuracy": 0.6086021505376344,
+      "precision": 0.4985507246376812,
+      "recall": 0.18921892189218922,
+      "f1": 0.2743221690590112,
+      "precision_at_20": 0.15,
+      "precision_at_50": 0.24,
+      "precision_at_100": 0.36,
+      "roc_auc": 0.6268917852237201,
+      "average_precision": 0.46760658636934826
+    },
+    "logistic_regression": {
+      "accuracy": 0.6606451612903226,
+      "precision": 0.5659340659340659,
+      "recall": 0.5665566556655666,
+      "f1": 0.5662451896646509,
+      "precision_at_20": 0.35,
+      "precision_at_50": 0.4,
+      "precision_at_100": 0.44,
+      "roc_auc": 0.7002914980763613,
+      "average_precision": 0.5215418768632023
+    },
+    "decision_tree": {
+      "accuracy": 0.6765591397849462,
+      "precision": 0.5685589519650655,
+      "recall": 0.7161716171617162,
+      "f1": 0.6338851022395326,
+      "precision_at_20": 0.55,
+      "precision_at_50": 0.62,
+      "precision_at_100": 0.6,
+      "roc_auc": 0.7415203737887913,
+      "average_precision": 0.5753189989001579
+    },
+    "random_forest": {
+      "accuracy": 0.672258064516129,
+      "precision": 0.5609958506224066,
+      "recall": 0.7436743674367436,
+      "f1": 0.6395458845789972,
+      "precision_at_20": 0.65,
+      "precision_at_50": 0.74,
+      "precision_at_100": 0.72,
+      "roc_auc": 0.7500295227262839,
+      "average_precision": 0.6182189675945406
+    }
+  },
+  "top50_tie_bounds": {
+    "baseline_rules": {
+      "tied_at_cutoff": 1,
+      "slots_from_ties": 1,
+      "minimum_precision": 0.24,
+      "maximum_precision": 0.24
+    },
+    "logistic_regression": {
+      "tied_at_cutoff": 1,
+      "slots_from_ties": 1,
+      "minimum_precision": 0.4,
+      "maximum_precision": 0.4
+    },
+    "decision_tree": {
+      "tied_at_cutoff": 602,
+      "slots_from_ties": 48,
+      "minimum_precision": 0.02,
+      "maximum_precision": 0.98
+    },
+    "random_forest": {
+      "tied_at_cutoff": 1,
+      "slots_from_ties": 1,
+      "minimum_precision": 0.74,
+      "maximum_precision": 0.74
+    }
+  },
+  "hand_rule": {
+    "eligible_all": 17,
+    "eligible_test": 0,
+    "precision_at_50": null,
+    "random_tie_expected_precision": 0.3909677419354839,
+    "note": "All held-out scores are zero; a top-K result would depend on tie order."
+  },
+  "selected_model_errors_at_0_5": {
+    "true_negative": 887,
+    "false_positive": 529,
+    "false_negative": 233,
+    "true_positive": 676
+  },
+  "errors_by_volume": [
+    {
+      "Impressions in 90 days": "Under 100",
+      "Pages": 1430,
+      "Declining rate": 0.3,
+      "False positives": 148,
+      "False negatives": 225
+    },
+    {
+      "Impressions in 90 days": "500-999",
+      "Pages": 141,
+      "Declining rate": 0.574468085106383,
+      "False positives": 60,
+      "False negatives": 0
+    },
+    {
+      "Impressions in 90 days": "1,000+",
+      "Pages": 477,
+      "Declining rate": 0.5031446540880503,
+      "False positives": 204,
+      "False negatives": 6
+    },
+    {
+      "Impressions in 90 days": "100-499",
+      "Pages": 277,
+      "Declining rate": 0.5740072202166066,
+      "False positives": 117,
+      "False negatives": 2
+    }
+  ],
+  "training_feature_importance": [
+    {
+      "feature": "days_with_impressions",
+      "importance": 0.1349508843137143
+    },
+    {
+      "feature": "log_impressions_90d",
+      "importance": 0.12937711568735658
+    },
+    {
+      "feature": "avg_position",
+      "importance": 0.10920281406752994
+    },
+    {
+      "feature": "content_age_days",
+      "importance": 0.09204804639307895
+    },
+    {
+      "feature": "char_count",
+      "importance": 0.03867607278065442
+    },
+    {
+      "feature": "age_tier_365+",
+      "importance": 0.036847425352582536
+    },
+    {
+      "feature": "log_clicks_90d",
+      "importance": 0.036572490941369544
+    },
+    {
+      "feature": "word_count",
+      "importance": 0.03540600725942198
+    }
+  ],
+  "original_receipt_comparison": {
+    "original_model_p50": 0.74,
+    "original_baseline_p50": 0.24,
+    "model_difference": 0.0,
+    "baseline_difference": 0.0
+  },
+  "checks": {
+    "unique_pages_and_complete_groups": true,
+    "prepared_rows_match_raw_rows": true,
+    "client_and_row_overlap_zero": true,
+    "direct_label_and_identifier_features_excluded": true,
+    "errors_match_training_only_predictions": true,
+    "top20_review_complete_without_identifiers": true,
+    "warehouse_time_group_and_tracking_checks": true,
+    "warehouse_policy_matches_validation_choice": true,
+    "paper_links_figures_metrics_and_identifiers_checked": true
+  },
+  "versions": {
+    "python": "3.10.11",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "matplotlib": "3.8.4"
+  },
+  "notebook_code_sha256": "69c335faf1933f248eca557cf1621f88813e8b36f5fe3724091af3ebdc4406e1",
+  "source_sha256": {
+    "scripts/ml_utils.py": "f1a66c9d1e7017a56948b7aaa96a3ad8e5b342c28dcef25ec0f633ce07b37544",
+    "scripts/03_train_model.py": "7c9f9e70e9474bdf085a0ae9fdcbbb7bc098f6fae91bb7bc068335217016eaec",
+    "work/scripts/capstone_report.py": "18126ba0a91a4fb92bd2e7b34588e7455bb0dcad17f8502805b31bcd4d051fdd",
+    "work/scripts/warehouse_capstone.py": "d6fe7b0a6b5b86b9d584b587c60192ed43525784e0c9733390cfae2b40c97b47",
+    "work/scripts/warehouse_narrative.py": "cf8d2c9999321eb0890a37ad8411c59e4516d508c2ebe246e7ef043390920cb3",
+    "work/scripts/warehouse_policy.py": "bde25c0301380eb2cdf4dc2bd8f6475820ec823946d845e3976f966e5e886151"
+  },
+  "limitations": [
+    "snapshot feature-label overlap",
+    "development holdout reused for selection",
+    "full-sample reference transforms",
+    "zero-filled missing values",
+    "no causal experiment"
+  ],
+  "warehouse_evaluation_rerun": true,
+  "warehouse_metrics_file": "work/outputs/warehouse_metrics.json",
+  "warehouse_metrics_sha256": "1dbd4a1fce433b5382422581c19c7224e137b93253d3908b68136eeb55773017",
+  "warehouse_policy_sha256": "0cfd0969507e149f49d196a22d0ac77c61677dcfb2000d3bb5171ce08f9c3acc",
+  "published": false
+}
