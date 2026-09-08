@@ -1,0 +1,219 @@
+{
+  "method": "momentum_rule",
+  "selected_from": "April-to-May validation, before June evaluation",
+  "scope": "20 evaluable held-out May pages, using feature-only rule scores",
+  "test_metrics": {
+    "rows": 5696,
+    "positives": 1770,
+    "positive_rate": 0.3107443820224719,
+    "roc_auc": 0.7002526255500777,
+    "average_precision": 0.5556564478891207,
+    "precision_at_20": 1.0,
+    "ties_at_20": {
+      "expected": 1.0,
+      "minimum": 1.0,
+      "maximum": 1.0,
+      "boundary_ties": 1
+    },
+    "precision_at_50": 0.96,
+    "ties_at_50": {
+      "expected": 0.96,
+      "minimum": 0.96,
+      "maximum": 0.96,
+      "boundary_ties": 1
+    },
+    "precision_at_100": 0.94,
+    "ties_at_100": {
+      "expected": 0.94,
+      "minimum": 0.94,
+      "maximum": 0.94,
+      "boundary_ties": 1
+    }
+  },
+  "rows": [
+    {
+      "rank": 1,
+      "rule_score": 10.153,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 2,
+      "rule_score": 9.938,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 3,
+      "rule_score": 9.833,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 4,
+      "rule_score": 9.493,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 5,
+      "rule_score": 9.191,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 6,
+      "rule_score": 9.17,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 7,
+      "rule_score": 9.118,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 8,
+      "rule_score": 9.112,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 9,
+      "rule_score": 9.026,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 10,
+      "rule_score": 8.898,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 11,
+      "rule_score": 8.794,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 12,
+      "rule_score": 8.756,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 13,
+      "rule_score": 8.729,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 14,
+      "rule_score": 8.482,
+      "volume_band": "1,000-9,999",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 15,
+      "rule_score": 8.434,
+      "volume_band": "1,000-9,999",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 16,
+      "rule_score": 8.368,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 17,
+      "rule_score": 8.252,
+      "volume_band": "1,000-9,999",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 18,
+      "rule_score": 8.201,
+      "volume_band": "1,000-9,999",
+      "action": "Check why recent visibility fell",
+      "reason": "past_decline_with_demand",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 19,
+      "rule_score": 8.178,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    },
+    {
+      "rank": 20,
+      "rule_score": 8.145,
+      "volume_band": "10,000+",
+      "action": "Review recent loss, snippet, and intent",
+      "reason": "past_decline_and_low_ctr",
+      "evidence": "Review required; score is not a probability",
+      "what_could_be_wrong": "Seasonality, tracking changes, or related-page gains"
+    }
+  ],
+  "checks": {
+    "matches_recorded_final_rule_metrics": true,
+    "matches_validation_preferred_method": true
+  }
+}

@@ -34,3 +34,6 @@ __pycache__/
 .venv/
 venv/
 .env
+
+# Private warehouse aggregates and temporary query spill files
+work/outputs/warehouse_cache/
